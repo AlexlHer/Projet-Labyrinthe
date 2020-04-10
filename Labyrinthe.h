@@ -13,9 +13,9 @@ class Labyrinthe : public Environnement
 
 	public:
 		Labyrinthe(char *);
-		int width() { return widthLaby; }	// retourne la largeur du labyrinthe.
-		int height() { return heightLaby; } // retourne la longueur du labyrinthe.
-		char data(int i, int j){ return _data[j][i]; } // retourne la case (i, j).
+		int width() { return heightLaby; }	 // retourne la largeur du labyrinthe.
+		int height() { return widthLaby; }   // retourne la longueur du labyrinthe.
+		char data(int i, int j){ return _data[i][j]; } // retourne la case (i, j).
 };
 
 #endif
