@@ -155,7 +155,7 @@ Labyrinthe::Labyrinthe(char *filename)
 			// Fin du mur H (si après, on a un non_mur.)
 			else if (laby[i][j] == '+' && debut != -1 && std::regex_match(cts_droite, non_mur))
 			{
-				murs.push_back({debut, i, j, i, 0});
+				murs.push_back({i, debut, i, j, 0});
 				for (int k = debut; k <= j; k++)
 				{
 					_data[i][k] = 1;
@@ -180,7 +180,7 @@ Labyrinthe::Labyrinthe(char *filename)
 			&& debutsVerticales.find(j) != debutsVerticales.end() && debutsVerticales.find(j)->second != -1
 			&& std::regex_match(cts_bas, non_mur))
 			{
-				murs.push_back({j, debutsVerticales.find(j)->second, j, i, 0});
+				murs.push_back({debutsVerticales.find(j)->second, j, i, j, 0});
 				for (int k = debutsVerticales.find(j)->second; k <= i; k++)
 				{
 					_data[k][j] = 1;
@@ -192,7 +192,7 @@ Labyrinthe::Labyrinthe(char *filename)
 			// Caisses.
 			if (laby[i][j] == 'x')
 			{
-				caisses.push_back({j, i, 0});
+				caisses.push_back({i, j, 0});
 				_data[i][j] = 1;
 			}
 
@@ -201,8 +201,8 @@ Labyrinthe::Labyrinthe(char *filename)
 			{
 				// On crée le chasseur.
 				Chasseur *c = new Chasseur(this);
-				c->_x = (float)j * 10;
-				c->_y = (float)i * 10;
+				c->_x = (float)i * 10;
+				c->_y = (float)j * 10;
 
 				// std::cout << "Chasseur" << c->_x << " " << c->_y << std::endl;
 
@@ -215,20 +215,20 @@ Labyrinthe::Labyrinthe(char *filename)
 			{
 				// On crée le chasseur.
 				Gardien *g = new Gardien(this, "Lezard");
-				g->_x = (float)j * 10;
-				g->_y = (float)i * 10;
+				g->_x = (float)i * 10;
+				g->_y = (float)j * 10;
 				// std::cout << "Gardiens" << g->_x << " " << g->_y << std::endl;
 
 				// On le met au début de la liste.
 				joueurs.push_back(g);
-				_data[i][j] = 1;
+				_data[i][j] = 2;
 			}
 
 			// Trésor.
 			else if (laby[i][j] == 'T')
 			{
-				_treasor._x = j;
-				_treasor._y = i;
+				_treasor._x = i;
+				_treasor._y = j;
 				_data[i][j] = 1;
 				// std::cout << "Trésor" << _treasor._x << " " << _treasor._y << std::endl;
 			}
@@ -238,11 +238,11 @@ Labyrinthe::Labyrinthe(char *filename)
 			{
 				// Mur +--a--+.
 				if (debut != -1)
-					a = Wall({j, i, j + 2, i, 0});
+					a = Wall({i, j, i, j + 2, 0});
 
 				// Mur +||a||+.
 				else
-					a = Wall({j, i, j, i + 2, 0});
+					a = Wall({i, j, i + 2, j, 0});
 
 				char *tmp3 = new char[128];
 				sprintf(tmp3, "%s/%s", texture_dir, images.find(laby[i][j])->second.c_str());
@@ -306,3 +306,31 @@ Labyrinthe::Labyrinthe(char *filename)
 		_guards[i] = joueurs[i];
 	}
 }
+
+bool Labyrinthe::set_data(int i, int j, int b){
+
+	if((int)_data[i][j] == 1){
+		return false;
+		std::cout << "error" << std::endl;
+	}
+	
+	else{
+		_data[i][j] = b;
+	}
+	return true;
+}
+
+
+//provisoire
+void Labyrinthe::display_tab(){
+	int a;
+	for(int i = 0; i < width(); i++){
+		for(int j = 0; j < height(); j++){
+			a = data(i, j);
+			std::cout << a;
+		}
+		std::cout << std::endl;
+	}
+	std::cout << "val : "<< (int)data(10, 13) <<std::endl;
+}
+

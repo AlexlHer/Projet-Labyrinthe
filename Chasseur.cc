@@ -1,4 +1,6 @@
 #include "Chasseur.h"
+#include <iostream>
+#include <unistd.h>
 
 /*
  *	Tente un deplacement.
@@ -6,11 +8,25 @@
 
 bool Chasseur::move_aux (double dx, double dy)
 {
-	if (EMPTY == _l -> data ((int)((_x + dx) / Environnement::scale),
-							 (int)((_y + dy) / Environnement::scale)))
+
+	int c = _l -> data ((int)((_x + dx) / Environnement::scale),
+				(int)((_y + dy) / Environnement::scale));	
+					 
+	int x = (int)(_x / Environnement::scale);
+	int new_x = (int)((_x + dx) / Environnement::scale);
+	int y = (int)(_y / Environnement::scale);
+	int new_y = (int)((_y + dy) / Environnement::scale);
+
+
+	if (EMPTY ==  c ||
+		3 == c)
 	{
 		_x += dx;
 		_y += dy;
+			if(x != new_x || y != new_y){
+			_l->set_data(x, y, 0);
+			_l->set_data(new_x, new_y, 3);
+		}
 		return true;
 	}
 	return false;
@@ -30,7 +46,7 @@ Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
 }
 
 /*
- *	Fait bouger la boule de feu (ceci est une exemple, à vous de traiter les collisions spécifiques...)
+ *	Fait bouger la boule de feu (ceci est une exemple, ï¿½ vous de traiter les collisions spï¿½cifiques...)
  */
 
 bool Chasseur::process_fireball (float dx, float dy)
@@ -62,8 +78,11 @@ bool Chasseur::process_fireball (float dx, float dy)
 
 void Chasseur::fire (int angle_vertical)
 {
+	//affiche l'Ã©tat du labyrinthe
+	_l->display_tab();
+
 	message ("Woooshh...");
 	_hunter_fire -> play ();
 	_fb -> init (/* position initiale de la boule */ _x, _y, 10.,
-				 /* angles de visée */ angle_vertical, _angle);
+				 /* angles de visï¿½e */ angle_vertical, _angle);
 }

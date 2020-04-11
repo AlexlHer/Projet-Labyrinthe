@@ -8,7 +8,8 @@ class Labyrinthe;
 class Gardien : public Mover
 {
 public:
-	Gardien(Labyrinthe *l, const char *modele) : Mover(120, 80, l, modele) {}
+	Gardien(Labyrinthe *l, const char *modele);
+	// : Mover(120, 80, l, modele) {}
 
 	// mon gardien pense tr�s mal!
 	void update(void);

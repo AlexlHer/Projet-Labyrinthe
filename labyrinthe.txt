@@ -4,26 +4,21 @@ a	affiche.jpg	# texture de l'affiche 1
 b	voiture.jpg	# texture de l'affiche 2
 
 
-+------b------+
-|x           x|
-| G         G |
-|             |
-|      x      |
-|     xTx     |
-|      x      |
-|             |
-a      C      b
-|             |
-|             |
-|             |
-b             a
-|             |
-|             |
-|             |
-|             |
-|             |
-|             |
-|             |
-| G         G |
-|x           x|
-+------a------+
++------b----------------+
+|x                     x|
+|                       |
+|                       |
+|      x                |
+|     xTx               |
+|      x                |
+|            C          |
+a            G          b
+|            xxxxxxxxx  |
+|            x       x  |
+|            x       x  |
+b            x       x  a
+|            xxxxxxxxx  |
+|                 x     |
+|                       |
+|                       |
++------a----------------+
