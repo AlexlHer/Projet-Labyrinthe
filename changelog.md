@@ -2,6 +2,13 @@
 
 ## Changelog
 
+## [Build 200410.1] - 2020-04-10
+
+### Fixed
+
+- (A) Correction au niveau de la lecture du laby qui sortait une représentation mirroir.
+
+
 ## [Build 200405.1] - 2020-04-05
 
 ### Added
@@ -20,3 +27,4 @@
 - Marche aléatoire du gardien
 - Ajout display_tab, afficher le contenu de _data
 - Ajout des hitbox qui suivent le gardien et le chasseur
+

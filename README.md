@@ -7,6 +7,13 @@ Jeu labyrinthe en C++.
 Projet POA : https://www.lri.fr/~pa/PROGCXX/laby-hante.html
 
 # Derniers changements :
+## [Build 200410.1] - 2020-04-10
+
+### Fixed
+
+- (A) Correction au niveau de la lecture du laby qui sortait une représentation mirroir.
+
+
 ## [Build 200405.1] - 2020-04-05
 
 ### Added

@@ -21,6 +21,7 @@ class Labyrinthe : public Environnement
 
 		//provisoire
 		void display_tab();
+
 };
 
 #endif
