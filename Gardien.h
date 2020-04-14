@@ -7,6 +7,10 @@ class Labyrinthe;
 
 class Gardien : public Mover
 {
+private:
+	bool _aggressif = false;
+	float _rotation;
+
 public:
 	Gardien(Labyrinthe *l, const char *modele);
 	// : Mover(120, 80, l, modele) {}
@@ -19,6 +23,12 @@ public:
 	void fire(int angle_vertical);
 	// quand a faire bouger la boule de feu...
 	bool process_fireball(float dx, float dy);
+
+	bool aim();
+
+	bool attaque();
+
+	bool analyse(int vision);
 };
 
 #endif

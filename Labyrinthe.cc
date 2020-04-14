@@ -5,6 +5,7 @@
 #include <fstream>
 #include <regex>
 #include <map>
+#include <queue>
 
 Sound *Chasseur::_hunter_fire; // bruit de l'arme du chasseur.
 Sound *Chasseur::_hunter_hit;  // cri du chasseur touché.
@@ -90,15 +91,21 @@ Labyrinthe::Labyrinthe(char *filename)
 	tab = new char[widthLaby * heightLaby];
 	_data = new char *[heightLaby];
 
+	// Innondation.
+	tabIn = new int[widthLaby * heightLaby];
+	_innond = new int *[heightLaby];
+
 	// On met des cases vide.
 	for(int i = 0; i < widthLaby * heightLaby; i++)
 	{
 		tab[i] = EMPTY;
+		tabIn[i] = -1;
 	}
 
 	for (int i = 0; i < heightLaby; i++)
 	{
 		_data[i] = tab + (i * widthLaby);
+		_innond[i] = tabIn + (i * widthLaby);
 	}
 
 
@@ -112,8 +119,8 @@ Labyrinthe::Labyrinthe(char *filename)
 	// 	std::cout << std::endl;
 	// }
 
-	std::regex affiche("[a-wy-z]");
-	std::regex non_mur("[CGx ]");
+	std::regex affiche("[a-z]");
+	std::regex non_mur("[CGX ]");
 
 	int debut;
 	std::vector<Wall> murs;
@@ -159,6 +166,7 @@ Labyrinthe::Labyrinthe(char *filename)
 				for (int k = debut; k <= j; k++)
 				{
 					_data[i][k] = 1;
+					_innond[i][k] = -2;
 				}
 				// std::cout << "Mur H" << debut << " " << j << " " << i << std::endl;
 				debut = -1;
@@ -184,16 +192,18 @@ Labyrinthe::Labyrinthe(char *filename)
 				for (int k = debutsVerticales.find(j)->second; k <= i; k++)
 				{
 					_data[k][j] = 1;
+					_innond[k][j] = -2;
 				}
 				// std::cout << "Mur V" << debutsVerticales.find(j)->second << " " << i << " " << j << std::endl;
 				debutsVerticales[j] = -1;
 			}
 
 			// Caisses.
-			if (laby[i][j] == 'x')
+			if (laby[i][j] == 'X')
 			{
 				caisses.push_back({i, j, 0});
 				_data[i][j] = 1;
+				_innond[i][j] = -2;
 			}
 
 			// Chasseur.
@@ -214,7 +224,7 @@ Labyrinthe::Labyrinthe(char *filename)
 			else if (laby[i][j] == 'G')
 			{
 				// On crée le chasseur.
-				Gardien *g = new Gardien(this, "Lezard");
+				Gardien *g = new Gardien(this, "Blade");
 				g->_x = (float)i * 10;
 				g->_y = (float)j * 10;
 				// std::cout << "Gardiens" << g->_x << " " << g->_y << std::endl;
@@ -230,6 +240,7 @@ Labyrinthe::Labyrinthe(char *filename)
 				_treasor._x = i;
 				_treasor._y = j;
 				_data[i][j] = 1;
+				_innond[i][j] = -1;
 				// std::cout << "Trésor" << _treasor._x << " " << _treasor._y << std::endl;
 			}
 
@@ -250,33 +261,10 @@ Labyrinthe::Labyrinthe(char *filename)
 
 				affiches.push_back(a);
 				_data[i][j] = 1;
+				_innond[i][j] = -2;
 			}
 		}
 	}
-
-	// _nwall = murs.size();
-	// std::copy(murs.begin(), murs.end(), _walls);
-
-	// _npicts = affiches.size();
-	// std::copy(affiches.begin(), affiches.end(), _picts);
-
-	// _nboxes = caisses.size();
-	// std::copy(caisses.begin(), caisses.end(), _boxes);
-
-	// _nguards = joueurs.size();
-	// std::copy(joueurs.begin(), joueurs.end(), _guards);
-
-	// _nwall = murs.size();
-	// _walls = murs.data();
-
-	// _npicts = affiches.size();
-	// _picts = affiches.data();
-
-	// _nboxes = caisses.size();
-	// _boxes = caisses.data();
-
-	// _nguards = joueurs.size();
-	// _guards = joueurs.data();
 
 	_nwall = murs.size();
 	_walls = new Wall[murs.size()];
@@ -305,6 +293,127 @@ Labyrinthe::Labyrinthe(char *filename)
 	{
 		_guards[i] = joueurs[i];
 	}
+
+	murs.clear();
+	murs.swap(murs);
+
+	affiches.clear();
+	affiches.swap(affiches);
+
+	caisses.clear();
+	caisses.swap(caisses);
+
+	joueurs.clear();
+	joueurs.swap(joueurs);
+
+	// Création de la matrice d'innondation.
+	// -1 = Vide / -2 = Inaccessible
+
+	// innondationDFS(_treasor._x, _treasor._y, 0);
+	innondationBFS();
+
+	// for (int i = 0; i < heightLaby; i++)
+	// {
+	// 	for (int j = 0; j < widthLaby; j++)
+	// 	{
+	// 		std::cout << _innond[i][j] << " ";
+	// 	}
+	// 	std::cout << std::endl;
+	// }
+}
+
+// Algo type DFS (parcours en longueur).
+void Labyrinthe::innondationDFS(int x, int y, int distTresor)
+{
+	// Si sortie du tableau, on return.
+	if (x < 0 || x >= heightLaby || y < 0 || y >= widthLaby || _innond[x][y] == -2) return;
+
+	// Si la case à déjà une distance ou que cette distance 
+	// est plus petit que celle étudié, on return.
+	if (_innond[x][y] == -1 || _innond[x][y] > distTresor)
+	{
+		_innond[x][y] = distTresor;
+		innondationDFS(x, y - 1, distTresor + 1);
+		innondationDFS(x, y + 1, distTresor + 1);
+		innondationDFS(x + 1, y, distTresor + 1);
+		innondationDFS(x - 1, y, distTresor + 1);
+
+		innondationDFS(x + 1, y + 1, distTresor + 1);
+		innondationDFS(x + 1, y - 1, distTresor + 1);
+		innondationDFS(x - 1, y - 1, distTresor + 1);
+		innondationDFS(x - 1, y + 1, distTresor + 1);
+	}
+}
+
+// Algo type BFS (parcours en largeur).
+void Labyrinthe::innondationBFS()
+{
+	// Création de deux files.
+	std::queue<int> queueX;
+	std::queue<int> queueY;
+
+	// On récupère la position du trésor comme position initiale.
+	int x = _treasor._x;
+	int y = _treasor._y;
+
+	// Permet de sauvegarder les voisins de x, y.
+	int voisinX, voisinY;
+
+	// On initialise la distance au trésor à 0.
+	int distTresor = 0;
+
+	// On dit que le trésor est à distance 0 de lui-même.
+	// On incrémente de 1 pour les voisins du trésor.
+	_innond[x][y] = distTresor++;
+
+	// On met la position du trésor dans la file.
+	queueX.push(x);
+	queueY.push(y);
+
+	// Tant que toutes les cases n'ont pas été étudié.
+	while(!queueX.empty())
+	{
+
+		// On récupère le premier élément de la file.
+		x = queueX.front();
+		y = queueY.front();
+
+		// On l'enlève de la file.
+		queueX.pop();
+		queueY.pop();
+
+		// Si l'élément étudié est à une distance supérieur, c'est qu'on étudie un 
+		// niveau inferieur de "l'arbre" donc on incrémente de 1.
+		if(_innond[x][y] == distTresor) distTresor++;
+
+		// Pour tous les voisins.
+		for(int sX = -1; sX <= 1; sX++)
+		{
+			for (int sY = -1; sY <= 1; sY++)
+			{
+				// On ne veut pas étudier l'élément actuel, donc lorsqu'on est dessus, on saute.
+				if (sX == 0 && sY == 0) continue;
+
+				// On récupère la position du voisin de l'élément. 
+				voisinX = x + sX;
+				voisinY = y + sY;
+
+				// Si ce voisin sort du tableau, on le saute.
+				if (voisinX < 0 || voisinX >= heightLaby || voisinY < 0 || voisinY >= widthLaby) continue;
+
+				// Si ce voisin n'a pas été étudié.
+				if (_innond[voisinX][voisinY] == -1) // Bleu
+				{
+					// On le met dans la file.
+					queueX.push(voisinX);
+					queueY.push(voisinY);
+
+					// On lui met une position.
+					_innond[voisinX][voisinY] = distTresor; // Blanc
+				}
+			}
+		}
+	}
 }
 
 bool Labyrinthe::set_data(int i, int j, int b){
@@ -320,6 +429,17 @@ bool Labyrinthe::set_data(int i, int j, int b){
 	return true;
 }
 
+// retourne la case (i, j).
+char Labyrinthe::data(int i, int j)
+{
+	if(i < 0 || i > heightLaby || j < 0 || j > widthLaby)
+	{
+		std::cout << "error data" << std::endl;
+		return 1;
+	}
+
+	return _data[i][j];
+}
 
 //provisoire
 void Labyrinthe::display_tab(){

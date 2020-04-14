@@ -1,0 +1,28 @@
+# un commentaire commence par #
+
+a	affiche.jpg	# texture de l'affiche 1
+b	voiture.jpg	# texture de l'affiche 2
+
+
++--------------------+
+|                    |
+|                    |
+|                    |
+|          C         |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|         G          |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
++--------------------+

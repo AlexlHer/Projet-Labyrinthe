@@ -23,6 +23,7 @@ bool Chasseur::move_aux (double dx, double dy)
 	{
 		_x += dx;
 		_y += dy;
+		
 			if(x != new_x || y != new_y){
 			_l->set_data(x, y, 0);
 			_l->set_data(new_x, new_y, 3);
@@ -51,24 +52,35 @@ Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
 
 bool Chasseur::process_fireball (float dx, float dy)
 {
+	Mover *cible = _l->_guards[1];
+	float a = _fb->get_x();
+	float b = _fb->get_y();
+
 	// calculer la distance entre le chasseur et le lieu de l'explosion.
-	float	x = (_x - _fb -> get_x ()) / Environnement::scale;
-	float	y = (_y - _fb -> get_y ()) / Environnement::scale;
-	float	dist2 = x*x + y*y;
+	float x = (_x - _fb->get_x()) / Environnement::scale;
+	float y = (_y - _fb->get_y()) / Environnement::scale;
+	float dist2 = x * x + y * y;
 	// on bouge que dans le vide!
-	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
-							 (int)((_fb -> get_y () + dy) / Environnement::scale)))
+
+	if ((a < cible->_x + Environnement::scale) && (a >= cible->_x - Environnement::scale) &&
+		(b < cible->_y + Environnement::scale) && (b >= cible->_y - Environnement::scale))
 	{
-		message ("Woooshh ..... %d", (int) dist2);
+		return false;
+	}
+	else if (EMPTY == _l->data((int)((_fb->get_x() + dx) / Environnement::scale),
+							   (int)((_fb->get_y() + dy) / Environnement::scale)))
+	{
+		message("Woooshh ..... %d", (int)dist2);
 		// il y a la place.
 		return true;
 	}
+
 	// collision...
 	// calculer la distance maximum en ligne droite.
-	float	dmax2 = (_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ());
+	float dmax2 = (_l->width()) * (_l->width()) + (_l->height()) * (_l->height());
 	// faire exploser la boule de feu avec un bruit fonction de la distance.
-	_wall_hit -> play (1. - dist2/dmax2);
-	message ("Booom...");
+	_wall_hit->play(1. - dist2 / dmax2);
+	message("Booom...");
 	return false;
 }
 

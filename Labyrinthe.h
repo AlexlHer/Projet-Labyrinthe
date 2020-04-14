@@ -2,20 +2,29 @@
 #define LABYRINTHE_H
 
 #include "Environnement.h"
+#include <queue>
 
 class Labyrinthe : public Environnement
 {
 	private:
 		char *tab;
 		char **_data;
+
+		// Matrice de int pour algo innondation.
+		int *tabIn;
+		int **_innond;
+
 		int widthLaby;
 		int heightLaby;
+
+		void innondationDFS(int, int, int);
+		void innondationBFS();
 
 	public:
 		Labyrinthe(char *);
 		int width() { return heightLaby; }	 // retourne la largeur du labyrinthe.
 		int height() { return widthLaby; }   // retourne la longueur du labyrinthe.
-		char data(int i, int j){ return _data[i][j]; } // retourne la case (i, j).
+		char data(int i, int j);
 
 		bool set_data(int i, int j, int b);
 

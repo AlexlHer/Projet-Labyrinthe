@@ -1,24 +1,24 @@
 # un commentaire commence par #
 
-a	affiche.jpg	# texture de l'affiche 1
-b	voiture.jpg	# texture de l'affiche 2
+a	affiche.jpg	# teXture de l'affiche 1
+b	voiture.jpg	# teXture de l'affiche 2
 
 
 +------b----------------+
-|x                     x|
+|X                     X|
 |                       |
 |                       |
-|      x                |
-|     xTx               |
-|      x                |
+|                       |
+|      T                |
+|                       |
 |            C          |
-a            G          b
-|            xxxxxxxxx  |
-|            x       x  |
-|            x       x  |
-b            x       x  a
-|            xxxxxxxxx  |
-|                 x     |
+a                       b
+|                       |
+|                       |
+|                       |
+b                       a
+|                       |
+|                       |
 |                       |
 |                       |
 +------a----------------+

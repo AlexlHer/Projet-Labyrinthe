@@ -2,7 +2,36 @@
 
 ## Changelog
 
+## [Build 200414.1] - 2020-04-14
+
+### TODO
+
+- Mode attaque (déplacement vers le joueur en lui tirant dessus).
+- Mode défense.
+- Téléportation.
+- Changement de niveau.
+
+### Added
+
+- (A) Ajout de l'algo d'innondation (parcours en longueur pour l'instant).
+- (A) Ajout de l'algo innondation en BFS.
+- (D) Gardien tire sur le Chasseur.
+- (D) La boule explose sur le joueur.
+
+### Changed
+
+- (A) Suppression des vectors après lecture du laby.
+
+### Fixed
+
+- (A) Correction de la position des Gardiens. Les Gardiens ne rentre plus dans les objets.
+
+
 ## [Build 200410.1] - 2020-04-10
+
+### Added
+
+- (D) Déplacement des Gardiens aléatoire (Mode patrouille).
 
 ### Fixed
 
