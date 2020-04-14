@@ -2,6 +2,7 @@
 #define GARDIEN_H
 
 #include "Mover.h"
+#include "Sound.h"
 
 class Labyrinthe;
 
@@ -12,8 +13,13 @@ private:
 	float _rotation;
 
 public:
+
 	Gardien(Labyrinthe *l, const char *modele);
 	// : Mover(120, 80, l, modele) {}
+
+	Sound *_hunter_fire; // bruit de l'arme du chasseur.
+	Sound *_hunter_hit;	// cri du chasseur touch�.
+	Sound *_wall_hit;	// on a tap� un mur.
 
 	// mon gardien pense tr�s mal!
 	void update(void);

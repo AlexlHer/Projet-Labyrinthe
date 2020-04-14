@@ -91,7 +91,7 @@ bool Chasseur::process_fireball (float dx, float dy)
 void Chasseur::fire (int angle_vertical)
 {
 	//affiche l'état du labyrinthe
-	_l->display_tab();
+	// _l->display_tab();
 
 	message ("Woooshh...");
 	_hunter_fire -> play ();

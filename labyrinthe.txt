@@ -8,17 +8,17 @@ b	voiture.jpg	# teXture de l'affiche 2
 |X                     X|
 |                       |
 |                       |
-|                       |
-|      T                |
-|                       |
-|            C          |
+|     XXX               |
+|      TX               |
+|       X               |
+|      XX    C          |
 a                       b
 |                       |
-|                       |
+|               G       |
 |                       |
 b                       a
 |                       |
 |                       |
 |                       |
-|                       |
+|X                     X|
 +------a----------------+
