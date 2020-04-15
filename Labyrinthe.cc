@@ -231,7 +231,7 @@ Labyrinthe::Labyrinthe(char *filename)
 
 				// On le met au début de la liste.
 				joueurs.push_back(g);
-				_data[i][j] = 2;
+				_data[i][j] = 0;
 			}
 
 			// Trésor.

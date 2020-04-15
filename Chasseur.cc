@@ -17,16 +17,11 @@ bool Chasseur::move_aux(double dx, double dy)
 	int y = (int)(_y / Environnement::scale);
 	int new_y = (int)((_y + dy) / Environnement::scale);
 
-	if (EMPTY == c ||
-		3 == c)
+	if (EMPTY == c)
 	{
 		_x += dx;
 		_y += dy;
-		if (x != new_x || y != new_y)
-		{
-			//_l->set_data(x, y, 0);
-			//_l->set_data(new_x, new_y, 3);
-		}
+		
 		return true;
 	}
 	return false;

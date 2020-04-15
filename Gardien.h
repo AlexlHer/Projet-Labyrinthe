@@ -43,6 +43,9 @@ class Gardien : public Mover
 		bool case_convert(float x, float y, int a);
 
 		void checkAngle();
+
+		bool ciblage(int angleCible);
+
 };
 
 #endif

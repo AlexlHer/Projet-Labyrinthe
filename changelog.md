@@ -14,9 +14,16 @@
 ### Added
 
 - (A/D) Ajout initial du mode attaque (suit le Chasseur en tirant, prise en compte des obstacles).
+- (D) Ajout traque du gardien. Quand il aggresse le chasseur, s'il le perd de vue il ira à la dernière position connu du chasseur
+- (D) Ajout Rotation/Alerte. Lorsque le chasseur entre dans le champs de vision du gardien, celui-ci passe en "alerte" et tourne jusqu'à être face au chasseur avant de
+	passer en mode "aggressif".
+- (D) Ajout Bloquage de vue. La vue du gardien est obstruée par les murs et les caisses.
 - (A) Ajout de la distance max du laby dans Laby.cc et .h.
 - (A) Ajout initial du mode défense.
 
+### Fixed
+
+- (D) Correction sur les angles qui allaient de -180 à 180. Ils sont désormais entre 0 et 360
 
 ## [Build 200414.1] - 2020-04-14
 

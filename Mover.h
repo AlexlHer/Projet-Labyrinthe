@@ -19,7 +19,7 @@ public:
 
 	Mover (int x, int y, Labyrinthe* l, const char* modele) :
 		_l ((Environnement*)l), _fb (0), _x ((float)x), _y ((float)y),
-		_angle (90)
+		_angle (0)
 	{ _model = init (modele); }
 	virtual ~Mover () {}
 	void tomber ();			// fait tomber un personnage (gardien) et se relever
