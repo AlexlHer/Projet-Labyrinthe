@@ -15,6 +15,7 @@ public:
 	float		_x, _y;		// position.
 	int			_angle;		// angle de d�placement/tir.
 	void*		_model;			// le mod�le graphique.
+	bool		_defenseur;
 
 	Mover (int x, int y, Labyrinthe* l, const char* modele) :
 		_l ((Environnement*)l), _fb (0), _x ((float)x), _y ((float)y),

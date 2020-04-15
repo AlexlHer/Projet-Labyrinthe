@@ -310,7 +310,17 @@ Labyrinthe::Labyrinthe(char *filename)
 	// -1 = Vide / -2 = Inaccessible
 
 	// innondationDFS(_treasor._x, _treasor._y, 0);
-	innondationBFS();
+	distMax = innondationBFS();
+	seuilDefense = distMax / 2;
+
+	// On donne les roles de défenseur.
+	int potentielDefense = 0;
+	for (int i = 1; i < _nguards; i++)
+	{
+		potentielDefense += distMax / _innond[(int)(_guards[i]->_x + Environnement::scale / 2) / Environnement::scale][(int)(_guards[i]->_y + Environnement::scale / 2) / Environnement::scale];
+		if(potentielDefense <= seuilDefense) _guards[i]->_defenseur = true;
+		else break;
+	}
 
 	// for (int i = 0; i < heightLaby; i++)
 	// {
@@ -346,7 +356,7 @@ void Labyrinthe::innondationDFS(int x, int y, int distTresor)
 }
 
 // Algo type BFS (parcours en largeur).
-void Labyrinthe::innondationBFS()
+int Labyrinthe::innondationBFS()
 {
 	// Création de deux files.
 	std::queue<int> queueX;
@@ -414,6 +424,7 @@ void Labyrinthe::innondationBFS()
 			}
 		}
 	}
+	return distTresor;
 }
 
 bool Labyrinthe::set_data(int i, int j, int b){
@@ -439,6 +450,18 @@ char Labyrinthe::data(int i, int j)
 	}
 
 	return _data[i][j];
+}
+
+// retourne la case (i, j).
+int Labyrinthe::innond(int i, int j)
+{
+	if (i < 0 || i > heightLaby || j < 0 || j > widthLaby)
+	{
+		std::cout << "error data" << std::endl;
+		return -2;
+	}
+
+	return _innond[i][j];
 }
 
 //provisoire

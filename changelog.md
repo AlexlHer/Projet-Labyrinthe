@@ -2,6 +2,22 @@
 
 ## Changelog
 
+## [Build 200415.1] - 2020-04-15
+
+### TODO
+
+- Mode attaque (déplacement vers le joueur en lui tirant dessus).
+- Mode défense.
+- Téléportation.
+- Changement de niveau.
+
+### Added
+
+- (A/D) Ajout initial du mode attaque (suit le Chasseur en tirant, prise en compte des obstacles).
+- (A) Ajout de la distance max du laby dans Laby.cc et .h.
+- (A) Ajout initial du mode défense.
+
+
 ## [Build 200414.1] - 2020-04-14
 
 ### TODO

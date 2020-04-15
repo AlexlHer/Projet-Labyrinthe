@@ -61,8 +61,11 @@ public:
 	void make_fireballs (void);
 
 	virtual bool set_data (int i, int j, int b) =0;
-	virtual void display_tab() =0;
+	virtual void display_tab() = 0;
 
+	virtual int innond(int i, int j) = 0; // retourne la case (i, j).
+	virtual int getDistMax() = 0;
+	virtual int getSeuilDefense() = 0;
 };
 
 #endif

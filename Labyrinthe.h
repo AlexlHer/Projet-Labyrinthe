@@ -17,14 +17,21 @@ class Labyrinthe : public Environnement
 		int widthLaby;
 		int heightLaby;
 
+		int distMax;
+		int seuilDefense;
+
 		void innondationDFS(int, int, int);
-		void innondationBFS();
+		int innondationBFS();
 
 	public:
 		Labyrinthe(char *);
 		int width() { return heightLaby; }	 // retourne la largeur du labyrinthe.
 		int height() { return widthLaby; }   // retourne la longueur du labyrinthe.
 		char data(int i, int j);
+		int innond(int i, int j);
+
+		int getDistMax() { return distMax; };
+		int getSeuilDefense() { return seuilDefense; };
 
 		bool set_data(int i, int j, int b);
 

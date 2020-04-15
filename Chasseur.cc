@@ -6,27 +6,26 @@
  *	Tente un deplacement.
  */
 
-bool Chasseur::move_aux (double dx, double dy)
+bool Chasseur::move_aux(double dx, double dy)
 {
 
-	int c = _l -> data ((int)((_x + dx) / Environnement::scale),
-				(int)((_y + dy) / Environnement::scale));	
-					 
+	int c = _l->data((int)((_x + dx) / Environnement::scale),
+					 (int)((_y + dy) / Environnement::scale));
+
 	int x = (int)(_x / Environnement::scale);
 	int new_x = (int)((_x + dx) / Environnement::scale);
 	int y = (int)(_y / Environnement::scale);
 	int new_y = (int)((_y + dy) / Environnement::scale);
 
-
-	if (EMPTY ==  c ||
+	if (EMPTY == c ||
 		3 == c)
 	{
 		_x += dx;
 		_y += dy;
-		
-			if(x != new_x || y != new_y){
-			_l->set_data(x, y, 0);
-			_l->set_data(new_x, new_y, 3);
+		if (x != new_x || y != new_y)
+		{
+			//_l->set_data(x, y, 0);
+			//_l->set_data(new_x, new_y, 3);
 		}
 		return true;
 	}
@@ -37,21 +36,22 @@ bool Chasseur::move_aux (double dx, double dy)
  *	Constructeur.
  */
 
-Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
+Chasseur::Chasseur(Labyrinthe *l) : Mover(100, 80, l, 0)
 {
 	// initialise les sons.
-	_hunter_fire = new Sound ("sons/hunter_fire.wav");
-	_hunter_hit = new Sound ("sons/hunter_hit.wav");
+	_hunter_fire = new Sound("sons/hunter_fire.wav");
+	_hunter_hit = new Sound("sons/hunter_hit.wav");
 	if (_wall_hit == 0)
-		_wall_hit = new Sound ("sons/hit_wall.wav");
+		_wall_hit = new Sound("sons/hit_wall.wav");
 }
 
 /*
  *	Fait bouger la boule de feu (ceci est une exemple, � vous de traiter les collisions sp�cifiques...)
  */
 
-bool Chasseur::process_fireball (float dx, float dy)
+bool Chasseur::process_fireball(float dx, float dy)
 {
+
 	Mover *cible = _l->_guards[1];
 	float a = _fb->get_x();
 	float b = _fb->get_y();
@@ -88,13 +88,13 @@ bool Chasseur::process_fireball (float dx, float dy)
  *	Tire sur un ennemi.
  */
 
-void Chasseur::fire (int angle_vertical)
+void Chasseur::fire(int angle_vertical)
 {
 	//affiche l'état du labyrinthe
-	// _l->display_tab();
+	//_l->display_tab();
 
-	message ("Woooshh...");
-	_hunter_fire -> play ();
-	_fb -> init (/* position initiale de la boule */ _x, _y, 10.,
-				 /* angles de vis�e */ angle_vertical, _angle);
+	message("Woooshh...");
+	_hunter_fire->play();
+	_fb->init(/* position initiale de la boule */ _x, _y, 10.,
+			  /* angles de vis�e */ angle_vertical, _angle);
 }
