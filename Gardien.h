@@ -3,6 +3,8 @@
 
 #include "Mover.h"
 #include "Sound.h"
+#include "Chasseur.h"
+
 
 class Labyrinthe;
 
@@ -14,8 +16,13 @@ class Gardien : public Mover
 		float _direction;
 		int distanceVision;
 		float potentielDefense;
+		int _life = 3;
+		//_shot = true uniquement si la fireball du gardien n'a pas encore explosé
+		bool _shot = false;
 
 	public:
+		
+
 		Sound *_hunter_fire; // bruit de l'arme du chasseur.
 		Sound *_hunter_hit;	 // cri du chasseur touch�.
 		Sound *_wall_hit;	 // on a tap� un mur.
@@ -42,9 +49,18 @@ class Gardien : public Mover
 
 		bool case_convert(float x, float y, int a);
 
-		void checkAngle();
+		void ajusteAngle();
 
 		bool ciblage(int angleCible);
+
+		void setLife(int l);
+
+		int getLife();
+
+		// inverse _shot
+		void switchShot();
+
+		void action();
 
 };
 

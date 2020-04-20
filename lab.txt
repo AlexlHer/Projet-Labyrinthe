@@ -8,11 +8,11 @@ b	voiture.jpg	# texture de l'affiche 2
 |                    |
 | X                  |
 |                    |
-|             XX     |
-|        XXX         |
+|            XXXX    |
+|        XXX    XX   |
 |        XXX     X   |
 |                    |
-|             X      |
+|     T       X      |
 |     X              |
 |   C X   G          a
 |     X              |

@@ -12,6 +12,8 @@ private:
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);
 public:
+	int _life = 5;
+
 	// les sons.
 	static Sound*	_hunter_fire;	// bruit de l'arme du chasseur.
 	static Sound*	_hunter_hit;	// cri du chasseur touch�.
@@ -29,6 +31,10 @@ public:
 	bool process_fireball (float dx, float dy);
 	// tire sur un ennemi.
 	void fire (int angle_vertical);
+
+	void check_treasor(double dx, double dy);
+
+	bool check_coordonnees(float x, float y, float cx, float cy, float ecart);
 };
 
 #endif
