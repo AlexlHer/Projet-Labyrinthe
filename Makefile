@@ -63,7 +63,7 @@ endif
 
 SRC	=	Labyrinthe.cc Chasseur.cc Gardien.cc
 H	=	Labyrinthe.h Chasseur.h FireBall.h Sound.h Environnement.h \
-		Gardien.h Mover.h
+		Gardien.h Personnage.h Mover.h
 O	=	Labyrinthe.o Chasseur.o Gardien.o
 
 ifeq '$(OS)' "Darwin"
@@ -85,6 +85,6 @@ endif
 clean:
 	$(RM) labh labh.exe $(O)
 
-Labyrinthe.o:	Labyrinthe.h Environnement.h Chasseur.h Mover.h Gardien.h
-Chasseur.o:		Chasseur.cc Chasseur.h Mover.h
-Gardien.o:		Gardien.cc Gardien.h Mover.h
+Labyrinthe.o:	Labyrinthe.h Environnement.h Chasseur.h Personnage.h Mover.h Gardien.h
+Chasseur.o:		Chasseur.cc Chasseur.h Personnage.h Mover.h
+Gardien.o:		Gardien.cc Gardien.h Personnage.h Mover.h

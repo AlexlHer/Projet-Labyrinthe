@@ -5,10 +5,9 @@
 #include "Sound.h"
 #include "Chasseur.h"
 
-
 class Labyrinthe;
 
-class Gardien : public Mover
+class Gardien : public Personnage
 {
 	private : 
 		bool _aggressif = false;
@@ -16,7 +15,7 @@ class Gardien : public Mover
 		float _direction;
 		int distanceVision;
 		float potentielDefense;
-		int _life = 3;
+		//int _life = 3;
 		//_shot = true uniquement si la fireball du gardien n'a pas encore explosé
 		bool _shot = false;
 
@@ -61,6 +60,8 @@ class Gardien : public Mover
 		void switchShot();
 
 		void action();
+
+		bool check_collision_ennemi(float x, float y, float cx, float cy, float ecart);
 
 };
 

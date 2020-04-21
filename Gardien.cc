@@ -1,11 +1,11 @@
 #include "Gardien.h"
-#include "iostream"
+#include <iostream>
 #include <time.h>
 #include <math.h>
 #include <unistd.h>
 #include "Sound.h"
 
-Gardien::Gardien(Labyrinthe *l, const char *modele) : Mover(120, 80, l, modele)
+Gardien::Gardien(Labyrinthe *l, const char *modele) : Personnage(l, modele, 3)
 {
 	// initialise les sons.
 	_hunter_fire = new Sound("sons/hunter_fire.wav");
@@ -33,6 +33,7 @@ Gardien::Gardien(Labyrinthe *l, const char *modele) : Mover(120, 80, l, modele)
 void Gardien::update(){
 	//si le gardien n'a plus de vie, ses mouvements ne sont plus actualisés
 	if(_life <= 0){
+		_life = 0;
 		return;
 	}
 
@@ -92,7 +93,7 @@ void Gardien::action(){
 
 		//Le gardien se dirige vers le Chasseur
 		_direction = _angle;
-		//move(-sin(piAngle), cos(piAngle));
+		move(-sin(piAngle), cos(piAngle));
 
 		//Le gardien tire, sa précision varie en fonction de sa vie
 		attaque();
@@ -101,7 +102,7 @@ void Gardien::action(){
 	//Mode passif, le gardien bouge selon sa nature (défenseur ou non)
 	else{
 		_angle = _direction;
-		//move(sin(-piAngle), cos(piAngle));
+		move(sin(-piAngle), cos(piAngle));
 	}
 
 	return;
@@ -206,23 +207,27 @@ bool Gardien::vision(){
 bool Gardien::attaque(){
 	int fireRate = rand()%20;
 	int erreurVisee = 20;
+
 	//si la fireball n'est pas déjà tirée
 	if(!_shot){
 		if(fireRate == 1){
-			int coeff = 3 - getLife();
+			int coeff = 3 - _life;
+
+			//le gardien a toute sa vie, il tire droit
 			if(coeff == 0){
 				fire(180);
 				switchShot();
 			}
+
+			//le gardien est blessé, ses tirs manquent de précision
 			else{
 				int borne = coeff * 10;
 				int devisage =  rand() % (borne +1);
 				devisage -= (borne/2);
-				std::cout << devisage << std::endl;
-
 				_angle += devisage;
 				ajusteAngle();
 				fire(180);
+				switchShot();
 			}
 		}
 	}
@@ -255,16 +260,20 @@ bool Gardien::move(double dx, double dy)
 	float x = _x + Environnement::scale / 2;
 	float y = _y + Environnement::scale / 2;
 
-	//récupère la case sur laquelle le gardien va se déplacer
-	int c = _l->data((int)((x + dx) / Environnement::scale),
-					 (int)((y + dy) / Environnement::scale));
-
 	// On regarde si la case est vide.
-	if (c == EMPTY || c == 2)
+	if (EMPTY == _l->data(	(int)((x + dx) / Environnement::scale),
+							(int)((y + dy) / Environnement::scale)))
 	{
 		// On ajoute le déplacement.
 		x += dx;
 		y += dy;
+
+		Personnage *cible = _allPerso[0];
+		if(check_collision_ennemi(x - Environnement::scale / 2, y - Environnement::scale / 2, cible->_x, cible->_y, Environnement::scale)){
+			cible->_life = 0;
+			message("Vous êtes mort");
+			return false;
+		}
 
 		// On déplace le personnage.
 		_x = x - Environnement::scale / 2;
@@ -333,17 +342,17 @@ void Gardien::fire(int angle_vertical){
 
 
 bool Gardien::process_fireball(float dx, float dy){
-	Mover* cible = _l->_guards[0];
+	Personnage* cible = _allPerso[0];
 
 	float a = _fb->get_x();
 	float b = _fb->get_y();
 
 	if(touche_cible(a, b, cible->_x, cible->_y)){
 		//_wall_hit -> play();
-		Chasseur *c = dynamic_cast<Chasseur*>(cible);
-		if(c->_life > 0){
-			c->_life --;
-			message("PV : %d", c->_life);
+		//Chasseur *c = dynamic_cast<Chasseur*>(cible);
+		if(cible->_life > 0){
+			cible->_life --;
+			message("PV : %d", cible->_life);
 		}
 		else{
 			message("vous êtes mort");
@@ -372,15 +381,21 @@ bool Gardien::process_fireball(float dx, float dy){
 	return false;
 }
 
-int Gardien::getLife(){
-	return _life;
-}
+// int Gardien::getLife(){
+// 	return _life;
+// }
 
-void Gardien::setLife(int l){
-	_life--;
-}
+// void Gardien::setLife(int l){
+// 	_life--;
+// }
 
 void Gardien::switchShot(){
 	(_shot == false) ? (_shot = true) : (_shot = false);
 	return;
+}
+
+bool Gardien::check_collision_ennemi(float x, float y, float cx, float cy, float ecart){
+	return (	(x >= cx && x < cx + ecart) &&
+				(y >= cy && y < cy + ecart) );
+	
 }

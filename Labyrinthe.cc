@@ -1,6 +1,7 @@
 #include "Labyrinthe.h"
 #include "Chasseur.h"
 #include "Gardien.h"
+#include "Personnage.h"
 #include <iostream>
 #include <fstream>
 #include <regex>
@@ -137,6 +138,9 @@ Labyrinthe::Labyrinthe(char *filename)
 
 	std::vector<Mover*> joueurs;
 
+	//damien
+	std::vector<Personnage*> persos;
+
 	std::map<int, int> debutsVerticales;
 
 	// Analyse laby.
@@ -219,6 +223,11 @@ Labyrinthe::Labyrinthe(char *filename)
 
 				// On le met au début de la liste.
 				joueurs.emplace(joueurs.begin(), c);
+
+				//damien
+				persos.emplace(persos.begin(), c);
+				int a = persos[0]->getLife();
+				std::cout << "pv : " << a << std::endl;
 			}
 
 			// Gardiens.
@@ -232,6 +241,9 @@ Labyrinthe::Labyrinthe(char *filename)
 
 				// On le met au début de la liste.
 				joueurs.push_back(g);
+
+				//damien
+				persos.push_back(g);
 				_data[i][j] = 0;
 			}
 
@@ -266,6 +278,13 @@ Labyrinthe::Labyrinthe(char *filename)
 			}
 		}
 	}
+
+	//damien
+	//std::vector<Personnage*> *p = &persos;
+	for(int i = 0; i < persos.size(); i++){
+		persos[i]->_allPerso = persos;
+	}
+	//Personnage::_allPerso = persos;
 
 	_nwall = murs.size();
 	_walls = new Wall[murs.size()];

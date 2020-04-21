@@ -4,15 +4,16 @@
 #include <stdio.h>
 #include "Mover.h"
 #include "Sound.h"
+#include "Personnage.h"
 
 class Labyrinthe;
 
-class Chasseur : public Mover {
+class Chasseur : public Personnage {
 private:
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);
 public:
-	int _life = 5;
+	//int _life = 5;
 
 	// les sons.
 	static Sound*	_hunter_fire;	// bruit de l'arme du chasseur.
@@ -34,7 +35,7 @@ public:
 
 	void check_treasor(double dx, double dy);
 
-	bool check_coordonnees(float x, float y, float cx, float cy, float ecart);
+	bool check_collision_ennemi(float x, float y, float cx, float cy, float ecart);
 };
 
 #endif

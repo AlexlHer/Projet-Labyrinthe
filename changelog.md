@@ -2,6 +2,25 @@
 
 ## Changelog
 
+## [Build 200416.1] - 2020-04-21
+
+### TODO
+
+- Correction Labyrinthe (certains murs ne sont pas pris en compte)
+- Mode défense.
+- Téléportation.
+- Changement de niveau.
+
+### Added
+
+- (D) Class Personnage. Permet de modifier plus simplement le labyrinthe et les personnages
+- (D) Système de PV. Les Personnages peuvent être tués s'ils n'ont plus de PV
+- (D) Les gardiens perdent en précision en fonction de leurs PV restants
+- (D) Un Gadien tue instantannément le Chasseur en le touchant
+- (D) Collisions. Les Gardiens et le Chasseur ne rentre plus en collision
+- (D) Objectif de Victoire. S'il n'y a plus de Gardiens ou si le Chasseur touche le trésor, la partie 		est gagné (un message s'affiche)
+
+
 ## [Build 200415.1] - 2020-04-15
 
 ### TODO
@@ -24,6 +43,7 @@
 ### Fixed
 
 - (D) Correction sur les angles qui allaient de -180 à 180. Ils sont désormais entre 0 et 360
+
 
 ## [Build 200414.1] - 2020-04-14
 
