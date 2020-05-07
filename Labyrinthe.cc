@@ -122,7 +122,8 @@ Labyrinthe::Labyrinthe(char *filename)
 	// }
 
 	std::regex affiche("[a-z]");
-	std::regex non_mur("[CGX ]");
+	std::regex non_mur("[A-Z ]");
+	std::regex tp("[A-BD-FH-SU-WY-Z]");
 
 	int debut;
 	std::vector<Wall> murs;
@@ -141,6 +142,7 @@ Labyrinthe::Labyrinthe(char *filename)
 	//damien
 	std::vector<Personnage*> persos;
 
+	// Permet de savoir où un mur vertical a commencé.
 	std::map<int, int> debutsVerticales;
 
 	// Analyse laby.
@@ -171,8 +173,11 @@ Labyrinthe::Labyrinthe(char *filename)
 				murs.push_back({i, debut, i, j, 0});
 				for (int k = debut; k <= j; k++)
 				{
-					_data[i][k] = 1;
-					_innond[i][k] = -2;
+					if(_data[i][k] == 0)
+					{
+						_data[i][k] = 1;
+						_innond[i][k] = -2;
+					}
 				}
 				// std::cout << "Mur H" << debut << " " << j << " " << i << std::endl;
 				debut = -1;
@@ -197,8 +202,11 @@ Labyrinthe::Labyrinthe(char *filename)
 				murs.push_back({debutsVerticales.find(j)->second, j, i, j, 0});
 				for (int k = debutsVerticales.find(j)->second; k <= i; k++)
 				{
-					_data[k][j] = 1;
-					_innond[k][j] = -2;
+					if(_data[k][j] == 0)
+					{
+						_data[k][j] = 1;
+						_innond[k][j] = -2;
+					}
 				}
 				// std::cout << "Mur V" << debutsVerticales.find(j)->second << " " << i << " " << j << std::endl;
 				debutsVerticales[j] = -1;
@@ -258,24 +266,48 @@ Labyrinthe::Labyrinthe(char *filename)
 				// std::cout << "Trésor" << _treasor._x << " " << _treasor._y << std::endl;
 			}
 
+			else if(std::regex_match(cts, tp))
+			{
+				_data[i][j] = laby[i][j];
+			}
+
 			// Affiches.
 			else if (std::regex_match(cts, affiche))
 			{
 				// Mur +--a--+.
 				if (debut != -1)
+				{
 					a = Wall({i, j, i, j + 2, 0});
+
+					_data[i][j] = laby[i][j];
+					_data[i][j + 1] = laby[i][j];
+					_data[i][j + 2] = laby[i][j];
+
+					_innond[i][j] = -2;
+					_innond[i][j+1] = -2;
+					_innond[i][j+2] = -2;
+				}
 
 				// Mur +||a||+.
 				else
+				{
 					a = Wall({i, j, i + 2, j, 0});
+
+					_data[i][j] = laby[i][j];
+					_data[i + 1][j] = laby[i][j];
+					_data[i + 2][j] = laby[i][j];
+
+					_innond[i][j] = -2;
+					_innond[i+1][j] = -2;
+					_innond[i+2][j] = -2;
+				}
 
 				char *tmp3 = new char[128];
 				sprintf(tmp3, "%s/%s", texture_dir, images.find(laby[i][j])->second.c_str());
 				a._ntex = wall_texture(tmp3);
 
 				affiches.push_back(a);
-				_data[i][j] = 1;
-				_innond[i][j] = -2;
+				
 			}
 		}
 	}

@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "Personnage.h"
 
+#define TP 2
 
 /*
  *	Constructeur.
@@ -49,6 +50,18 @@ bool Chasseur::move_aux(double dx, double dy)
 		_x += dx;
 		_y += dy;
 		return true;
+	}
+
+	else if('a' == _l->data(	(int)((_x + dx) / Environnement::scale),
+					 		(int)((_y + dy) / Environnement::scale)))
+	{
+		std::cout << "aaa" << std::endl;
+	}
+
+	else if ('b' == _l->data((int)((_x + dx) / Environnement::scale),
+						   (int)((_y + dy) / Environnement::scale)))
+	{
+		std::cout << "bbb" << std::endl;
 	}
 	return false;
 }

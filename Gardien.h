@@ -38,7 +38,7 @@ class Gardien : public Personnage
 		// quand a faire bouger la boule de feu...
 		bool process_fireball(float dx, float dy);
 
-		int aim();
+		int aim(float, float);
 
 		bool attaque();
 
