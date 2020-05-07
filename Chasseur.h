@@ -36,6 +36,8 @@ public:
 	void check_treasor(double dx, double dy);
 
 	bool check_collision_ennemi(float x, float y, float cx, float cy, float ecart);
+
+	void teleportation(int newPos);
 };
 
 #endif

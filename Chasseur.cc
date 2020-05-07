@@ -33,24 +33,50 @@ bool Chasseur::move_aux(double dx, double dy)
 	float x = _x + Environnement::scale / 2;
 	float y = _y + Environnement::scale / 2;
 
+	int posX = (int)((_x + dx) / Environnement::scale);
+	int posY = (int)((_y + dy) / Environnement::scale);
+
 	//vérifie si le Chasseur est proche du trésor
 	check_treasor(dx, dy);
 
-	if (EMPTY == _l->data(	(int)((_x + dx) / Environnement::scale),
-					 		(int)((_y + dy) / Environnement::scale)))
+	if (EMPTY == _l->data(posX, posY))
 	{
 		//empêche le Chasseur de se déplacer sur la position des Gardiens
 		for(int i = 1; i < _l->_nguards; i++){
-			Mover *cible = _l->_guards[i];
-			if(check_collision_ennemi(_x+dx, _y+dy, cible->_x, cible->_y, Environnement::scale)){
-				return false;
+			Personnage *cible = _allPerso[i];
+			if(cible->getLife() > 0){
+				if(check_collision_ennemi(_x+dx, _y+dy, cible->_x, cible->_y, Environnement::scale)){
+					return false;
+				}
 			}
+			
 		}
 		_x += dx;
 		_y += dy;
 		return true;
 	}
+
+	
+
+	else if(_l->data(posX, posY) >= 97 && _l->data(posX, posY) <= 122)
+	{
+		std::cout << "val : " << _l->data(posX, posY) -32 << std::endl;
+		teleportation(_l->data(posX, posY) - 32);	
+	}
+
 	return false;
+}
+
+void Chasseur::teleportation(int newPos){
+	int a;
+	for(int i = 0; i < _l->width(); i++){
+		for(int j = 0; j < _l->height(); j++){
+			if(_l->data(i, j) == 65){
+				_x = i * Environnement::scale;
+				_y = j * Environnement::scale;
+			}
+		}
+	}
 }
 
 
@@ -135,6 +161,14 @@ bool Chasseur::process_fireball(float dx, float dy)
 		// il y a la place.
 		return true;
 	}
+	else if(97 == _l->data(	(int)((_fb->get_x() + dx) / Environnement::scale),
+							(int)((_fb->get_y() + dy) / Environnement::scale)))
+	{
+		getLabyrinthe()->set_data(	(int)((_fb->get_x() + dx) / Environnement::scale),
+									(int)((_fb->get_y() + dy) / Environnement::scale),
+									0);
+		_l->reconfigure();
+	}
 
 	// collision...
 	// calculer la distance maximum en ligne droite.
@@ -161,8 +195,13 @@ void Chasseur::fire(int angle_vertical)
 
 	//_hunter_fire->play();
 
-	_fb->init(/* position initiale de la boule */ _x, _y, 10.,
+	if(_life > 0){
+		_myLaby->display_tab();
+
+		_fb->init(/* position initiale de la boule */ _x, _y, 10.,
 			  /* angles de vis�e */ angle_vertical, _angle);
+	}
+	
 }
 
 

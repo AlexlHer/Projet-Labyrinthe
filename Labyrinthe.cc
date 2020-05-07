@@ -165,43 +165,50 @@ Labyrinthe::Labyrinthe(char *filename)
 			}
 
 			// Fin du mur H (si après, on a un non_mur.)
-			else if (laby[i][j] == '+' && debut != -1 && std::regex_match(cts_droite, non_mur))
-			{
-				murs.push_back({i, debut, i, j, 0});
-				for (int k = debut; k <= j; k++)
-				{
-					_data[i][k] = 1;
-					_innond[i][k] = -2;
-				}
-				// std::cout << "Mur H" << debut << " " << j << " " << i << std::endl;
-				debut = -1;
-			}
+            else if (laby[i][j] == '+' && debut != -1 
+            && (std::regex_match(cts_droite, non_mur) || cts_droite == "|") )
+            {
+                murs.push_back({i, debut, i, j, 0});
+                for (int k = debut; k <= j; k++)
+                {
+                    if(_data[i][k] == 0)
+                    {
+                        _data[i][k] = 1;
+                        _innond[i][k] = -2;
+                    }
+                }
+                // std::cout << "Mur H" << debut << " " << j << " " << i << std::endl;
+                debut = -1;
+            }
 
-			// Début d'un mur V.
-			// Si y'a un + au-dessus et que debut n'est pas déjà utilisé.
-			if (laby[i][j] == '+' 
-			&& (debutsVerticales.find(j) == debutsVerticales.end() || debutsVerticales.find(j)->second == -1) 
-			&& !std::regex_match(cts_bas, non_mur))
-			{
-				debutsVerticales[j] = i;
-				// std::cout << "debut V" << debutsVerticales[j] << std::endl;
-			}
+            // Début d'un mur V.
+            // Si y'a un + au-dessus et que debut n'est pas déjà utilisé.
+            if (laby[i][j] == '+' 
+            && (debutsVerticales.find(j) == debutsVerticales.end() || debutsVerticales.find(j)->second == -1) 
+            && !std::regex_match(cts_bas, non_mur))
+            {
+                debutsVerticales[j] = i;
+                // std::cout << "debut V" << debutsVerticales[j] << std::endl;
+            }
 
-			// Fin d'un mur V.
-			// Si y'a un + au-dessus et que debut est utilisé.
-			else if (laby[i][j] == '+' 
-			&& debutsVerticales.find(j) != debutsVerticales.end() && debutsVerticales.find(j)->second != -1
-			&& std::regex_match(cts_bas, non_mur))
-			{
-				murs.push_back({debutsVerticales.find(j)->second, j, i, j, 0});
-				for (int k = debutsVerticales.find(j)->second; k <= i; k++)
-				{
-					_data[k][j] = 1;
-					_innond[k][j] = -2;
-				}
-				// std::cout << "Mur V" << debutsVerticales.find(j)->second << " " << i << " " << j << std::endl;
-				debutsVerticales[j] = -1;
-			}
+            // Fin d'un mur V.
+            // Si y'a un + au-dessus et que debut est utilisé.
+            else if (laby[i][j] == '+' 
+            && debutsVerticales.find(j) != debutsVerticales.end() && debutsVerticales.find(j)->second != -1
+            && (std::regex_match(cts_bas, non_mur) || cts_bas == "-") )
+            {
+                murs.push_back({debutsVerticales.find(j)->second, j, i, j, 0});
+                for (int k = debutsVerticales.find(j)->second; k <= i; k++)
+                {
+                    if(_data[k][j] == 0)
+                    {
+                        _data[k][j] = 1;
+                        _innond[k][j] = -2;
+                    }
+                }
+                // std::cout << "Mur V" << debutsVerticales.find(j)->second << " " << i << " " << j << std::endl;
+                debutsVerticales[j] = -1;
+            }
 
 			// Caisses.
 			if (laby[i][j] == 'X')
@@ -258,24 +265,43 @@ Labyrinthe::Labyrinthe(char *filename)
 			}
 
 			// Affiches.
-			else if (std::regex_match(cts, affiche))
-			{
-				// Mur +--a--+.
-				if (debut != -1)
-					a = Wall({i, j, i, j + 2, 0});
+            else if (std::regex_match(cts, affiche))
+            {
+                // Mur +--a--+.
+                if (debut != -1)
+                {
+                    a = Wall({i, j, i, j + 2, 0});
 
-				// Mur +||a||+.
-				else
-					a = Wall({i, j, i + 2, j, 0});
+                    _data[i][j] = laby[i][j];
+                    _data[i][j + 1] = laby[i][j];
+                    _data[i][j + 2] = laby[i][j];
 
-				char *tmp3 = new char[128];
-				sprintf(tmp3, "%s/%s", texture_dir, images.find(laby[i][j])->second.c_str());
-				a._ntex = wall_texture(tmp3);
+                    _innond[i][j] = -2;
+                    _innond[i][j+1] = -2;
+                    _innond[i][j+2] = -2;
+                }
 
-				affiches.push_back(a);
-				_data[i][j] = 1;
-				_innond[i][j] = -2;
-			}
+                // Mur +||a||+.
+                else
+                {
+                    a = Wall({i, j, i + 2, j, 0});
+
+                    _data[i][j] = laby[i][j];
+                    _data[i + 1][j] = laby[i][j];
+                    _data[i + 2][j] = laby[i][j];
+
+                    _innond[i][j] = -2;
+                    _innond[i+1][j] = -2;
+                    _innond[i+2][j] = -2;
+                }
+
+                char *tmp3 = new char[128];
+                sprintf(tmp3, "%s/%s", texture_dir, images.find(laby[i][j])->second.c_str());
+                a._ntex = wall_texture(tmp3);
+
+                affiches.push_back(a);
+                
+            }
 		}
 	}
 

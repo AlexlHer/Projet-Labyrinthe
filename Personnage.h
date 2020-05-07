@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "Mover.h"
+#include "Labyrinthe.h"
 
 class Labyrinthe;
 class Personnage;
@@ -16,9 +17,11 @@ class Personnage : public Mover{
     public:
         int _life;
         std::vector<Personnage*> _allPerso;
+        Labyrinthe* _myLaby;
 
         Personnage(Labyrinthe *l, const char *modele, int life) : Mover(120, 80, l, modele){
             _life = life;
+            _myLaby = l;
         }
         
         int getLife(){
@@ -28,6 +31,11 @@ class Personnage : public Mover{
         void setLife(int i){
             _life = i;
         }
+
+        Labyrinthe* getLabyrinthe(){
+            return _myLaby;
+        }
+
 };
 
 //initialisation de la variable statique
