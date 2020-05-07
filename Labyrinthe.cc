@@ -165,7 +165,8 @@ Labyrinthe::Labyrinthe(char *filename)
 			}
 
 			// Fin du mur H (si après, on a un non_mur.)
-			else if (laby[i][j] == '+' && debut != -1 && std::regex_match(cts_droite, non_mur))
+			else if (laby[i][j] == '+' && debut != -1 
+			&& (std::regex_match(cts_droite, non_mur) || cts_droite == "|") )
 			{
 				murs.push_back({i, debut, i, j, 0});
 				for (int k = debut; k <= j; k++)
@@ -191,7 +192,7 @@ Labyrinthe::Labyrinthe(char *filename)
 			// Si y'a un + au-dessus et que debut est utilisé.
 			else if (laby[i][j] == '+' 
 			&& debutsVerticales.find(j) != debutsVerticales.end() && debutsVerticales.find(j)->second != -1
-			&& std::regex_match(cts_bas, non_mur))
+			&& (std::regex_match(cts_bas, non_mur) || cts_bas == "-") )
 			{
 				murs.push_back({debutsVerticales.find(j)->second, j, i, j, 0});
 				for (int k = debutsVerticales.find(j)->second; k <= i; k++)
