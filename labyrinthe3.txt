@@ -1,0 +1,24 @@
+# un commentaire commence par #
+
+a	affiche.jpg	# teXture de l'affiche 1
+b	voiture.jpg	# teXture de l'affiche 2
+
+
++-----------------------+
+|                       |
+|                       |
+|                       |
+|                       |
+|       +-------+       |
+|       |       |       |
+|       | +---+ |       |
+|       | |T C| |       |
+|       | +-+ | |       |
+|       |     | |       |
+|       +-----+ |       |
+|       G       +       |
+|                       |
+|                       |
+|                       |
+|                       |
++-----------------------+

@@ -7,12 +7,12 @@ b	voiture.jpg	# teXture de l'affiche 2
 +------b----------------+
 |X                     X|
 |                       |
-|                       |
+|     C                 |
 |     XXX               |
 |      TX               |
 |       X               |
-|      XX    C          |
-a                       b
+|     XXX               |
+a                      bb
 |                       |
 |               G       |
 |                       |

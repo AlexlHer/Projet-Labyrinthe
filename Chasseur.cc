@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "Personnage.h"
 
+#define TP 2
 
 /*
  *	Constructeur.
@@ -39,7 +40,7 @@ bool Chasseur::move_aux(double dx, double dy)
 	//vérifie si le Chasseur est proche du trésor
 	check_treasor(dx, dy);
 
-	if (EMPTY == _l->data(posX, posY))
+	if (EMPTY == _l->data(posX, posY) || (_l->data(posX, posY) >= 65 && _l->data(posX, posY) <= 90))
 	{
 		//empêche le Chasseur de se déplacer sur la position des Gardiens
 		for(int i = 1; i < _l->_nguards; i++){
@@ -49,14 +50,12 @@ bool Chasseur::move_aux(double dx, double dy)
 					return false;
 				}
 			}
-			
 		}
 		_x += dx;
 		_y += dy;
 		return true;
 	}
 
-	
 
 	else if(_l->data(posX, posY) >= 97 && _l->data(posX, posY) <= 122)
 	{
@@ -67,11 +66,16 @@ bool Chasseur::move_aux(double dx, double dy)
 	return false;
 }
 
+
+/*
+ *	Téléporte le chasseur
+ */
+
 void Chasseur::teleportation(int newPos){
 	int a;
 	for(int i = 0; i < _l->width(); i++){
 		for(int j = 0; j < _l->height(); j++){
-			if(_l->data(i, j) == 65){
+			if(_l->data(i, j) == newPos){
 				_x = i * Environnement::scale;
 				_y = j * Environnement::scale;
 			}
@@ -139,8 +143,7 @@ bool Chasseur::process_fireball(float dx, float dy)
 					if(_allPerso[j]->_life > 0){
 						fin = false;
 						break;
-					}
-					
+					}	
 				}
 				if(fin){
 					message("Victoire, les gardiens ne sont plus en état de se battre");
@@ -155,18 +158,38 @@ bool Chasseur::process_fireball(float dx, float dy)
 			return false;
 		}
 	}
-	if(EMPTY == _l->data(	(int)((_fb->get_x() + dx) / Environnement::scale),
-							(int)((_fb->get_y() + dy) / Environnement::scale)))
-	{
+	int fireBallX = (int)((_fb->get_x() + dx) / Environnement::scale);
+	int fireBallY = (int)((_fb->get_y() + dy) / Environnement::scale);
+
+	if(EMPTY == _l->data(fireBallX, fireBallY)){
 		// il y a la place.
 		return true;
 	}
-	else if(97 == _l->data(	(int)((_fb->get_x() + dx) / Environnement::scale),
-							(int)((_fb->get_y() + dy) / Environnement::scale)))
-	{
-		getLabyrinthe()->set_data(	(int)((_fb->get_x() + dx) / Environnement::scale),
-									(int)((_fb->get_y() + dy) / Environnement::scale),
-									0);
+
+	else if(97 == _l->data(	fireBallX, fireBallY)){
+
+		//getLabyrinthe()->set_data(fireBallX, fireBallY, 0);
+		int mem;
+		for (int i = 0; i < _l->_nwall - 1; i++){
+			if(	fireBallX >= _l->_walls[i]._x1 && fireBallX >= _l->_walls[i]._x2 &&
+				fireBallY >= _l->_walls[i]._y1 && fireBallY >= _l->_walls[i]._y2){
+					std::cout << "salut" << std::endl;
+					// mem = i;
+					// _l->_walls[i] = _l->_walls[_l->_nwall];
+					break;
+			}
+			//_l->_nwall --;
+
+			// std::cout << "x1 : " << _l->_walls[i]._x1 << std::endl;
+			// std::cout << "y1 : " << _l->_walls[i]._y1 << std::endl;
+			// std::cout << "x2 : " << _l->_walls[i]._x2 << std::endl;
+			// std::cout << "y2 : " << _l->_walls[i]._y2 << std::endl;
+			// std::cout << "fireball x : " << (int)((_fb->get_x() + dx) / Environnement::scale) << std::endl;
+			// std::cout << "fireball y : " << (int)((_fb->get_y() + dy) / Environnement::scale) << std::endl;
+			// std::cout << std::endl;
+		}
+		
+		//_l->_npicts --;
 		_l->reconfigure();
 	}
 
@@ -204,6 +227,10 @@ void Chasseur::fire(int angle_vertical)
 	
 }
 
+
+/*
+ *	Vérifie si l'objet fictif de coordonnées X, y se trouve aux alentours de cx, cy
+ */
 
 bool Chasseur::check_collision_ennemi(float x, float y, float cx, float cy, float ecart){
 	return (	(x >= cx && x < cx + ecart) &&

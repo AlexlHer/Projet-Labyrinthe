@@ -2,6 +2,24 @@
 
 ## Changelog
 
+## [Build 200507.1] - 2020-05-07
+
+### TODO
+
+- Téléportation.
+- Changement de niveau.
+
+### Added
+
+- (A) Ajout des positions d'arrivée pour les téléporteurs.
+
+### Fixed
+
+- (A) Correction de la lecture laby (certains murs n'étaient pas pris en compte).
+- (A) Correction de la lecture des affiches.
+- (A) Mode défense normalement correct.
+
+
 ## [Build 200416.1] - 2020-04-21
 
 ### TODO

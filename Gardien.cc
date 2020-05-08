@@ -38,7 +38,7 @@ void Gardien::update(){
 	}
 
 	//détermine le mode du gardien (passif, alerte, aggressif)
-	vision();
+	//vision();
 
 	//détermine l'action effectuée
 	action();
@@ -54,7 +54,7 @@ void Gardien::action(){
 	if(_alerte){
 
 		//récupère l'angle en direction du chasseur
-		int angleCible = aim();
+		int angleCible = aim(_l->_guards[0]->_x, _l->_guards[0]->_y);
 
 		if(_angle >= angleCible){
 
@@ -88,12 +88,12 @@ void Gardien::action(){
 	if(_aggressif){
 
 		// l'angle est locké sur le chasseur
-		_angle = aim();
+		_angle = aim(_l->_guards[0]->_x, _l->_guards[0]->_y);
 		piAngle = (_angle * M_PI / 180);
 
 		//Le gardien se dirige vers le Chasseur
 		_direction = _angle;
-		move(-sin(piAngle), cos(piAngle));
+		//move(-sin(piAngle), cos(piAngle));
 
 		//Le gardien tire, sa précision varie en fonction de sa vie
 		attaque();
@@ -102,7 +102,7 @@ void Gardien::action(){
 	//Mode passif, le gardien bouge selon sa nature (défenseur ou non)
 	else{
 		_angle = _direction;
-		move(sin(-piAngle), cos(piAngle));
+		//move(sin(-piAngle), cos(piAngle));
 	}
 
 	return;
@@ -161,7 +161,7 @@ bool Gardien::vision(){
 
 	Mover* cible = _l->_guards[0];
 
-	int cibleAngle = aim();
+	int cibleAngle = aim(cible->_x, cible->_y);
 	float cibleAngleRadiant = (cibleAngle * M_PI / 180);	
 
 	//si la cible n'est pas dans le cercle de portée de vision du gardien, le gardien reste passif (les blocs et murs ne sont pour l'instant pas pris en compte)
@@ -235,14 +235,14 @@ bool Gardien::attaque(){
 }
 
 
-int Gardien::aim(){
-	Mover* cible = _l->_guards[0];
+int Gardien::aim(float x, float y){
 
-	float angle = atan((_x -cible->_x) / (_y - cible->_y));
-	if(cible->_y > _y){
+	float angle = atan((_x - x) / (_y - y));
+	if (y > _y)
+	{
 		angle += M_PI;
 
-		if(cible->_x > _x){
+		if(x > _x){
 			angle -= 2 * M_PI;
 		}
 	}
@@ -253,8 +253,8 @@ int Gardien::aim(){
 bool Gardien::move(double dx, double dy)
 {
 	// On réduit la vitesse.
-	// dx /= 4;
-	// dy /= 4;
+	dx /= 4;
+	dy /= 4;
 
 	// On prend le centre du personnage.
 	float x = _x + Environnement::scale / 2;
@@ -285,45 +285,58 @@ bool Gardien::move(double dx, double dy)
 	// Sinon, c'est qu'il y a collision et donc on oriente le personnage autre part.
 	else
 	{
+		//_direction = rand() % 360 + 1;
+		//return false;
 		// Si le Gardien est un défenseur, il va vers le trésor une fois sur deux.
-		// if(_defenseur && rand() % 2 == 1)
-		if(_defenseur)
+		if(_defenseur && rand() % 2 == 1)
+		//if(_defenseur)
 		{
-			_direction = rand() % 360 + 1;
 
-			// // La case du gardien.
-			// int cX = (int)(x / Environnement::scale);
-			// int cY = (int)(y / Environnement::scale);
+			// La case du gardien.
+			int cX = (int)(x / Environnement::scale);
+			int cY = (int)(y / Environnement::scale);
 
-			// // La où le gardien devra aller.
-			// int versX;
-			// int versY;
+			// La où le gardien devra aller.
+			int versX;
+			int versY;
 
-			// // On cherche la plus petite case autour du gardien (qui conduira vers le trésor).
-			// int plusPetit = _l->getDistMax();
+			// On cherche la plus petite case autour du gardien (qui conduira vers le trésor).
+			int plusPetit = INT_MAX;
 
-			// // Pour toutes les cases autour.
-			// for(int sX = -1; sX <= 1; sX++)
-			// {
-			// 	for (int sY = -1; sY <= 1; sY++)
-			// 	{
-			// 		// On ne veut pas étudier la case du gardien, donc lorsqu'on est dessus, on saute.
-			// 		if (sX == 0 && sY == 0) continue;
+			// Pour toutes les cases autour.
+			for(int sX = -1; sX <= 1; sX++)
+			{
+				for (int sY = -1; sY <= 1; sY++)
+				{
+					// On ne veut pas étudier la case du gardien, donc lorsqu'on est dessus, on saute.
+					if (sX == 0 && sY == 0) continue;
 
-			// 		// Si on a trouvé une case menant plus rapidement vers le trésor, on la choisi.
-			// 		if (_l->innond(cX + sX, cY + sY) < plusPetit && _l->innond(cX + sX, cY + sY) != -2)
-			// 		{
-			// 			versX = cX + sX;
-			// 			versY = cY + sY;
-			// 			plusPetit = _l->innond(cX + sX, cY + sY);
-			// 		}
-			// 	}
-			// }
-			// // std::cout << versX - cX << " " << versY - cY << std::endl;
+					// Si on a trouvé une case menant plus rapidement vers le trésor, on la choisi.
+					if (_l->innond(cX + sX, cY + sY) < plusPetit && _l->innond(cX + sX, cY + sY) != -2)
+					{
+						versX = cX + sX;
+						versY = cY + sY;
+						plusPetit = _l->innond(cX + sX, cY + sY);
+					}
+				}
+			}
+			//std::cout << " -------- " << std::endl;
+			//std::cout << versX << " " << versY << std::endl;
+			//std::cout << cX << " " << cY << std::endl;
 
-			// // On oriente vers la case menant vers le trésor.
-			// // TODO : A corriger.
-			// _direction = (atan((y - versY * Environnement::scale) / (x - versX * Environnement::scale)) * 180 / M_PI) - 90;
+			
+
+			// On oriente vers la case menant vers le trésor.
+
+			float xf = ((versX) * Environnement::scale);
+			float yf = ((versY) * Environnement::scale);
+
+			//float xf = ((_l->_treasor._x) * Environnement::scale);
+			//float yf = ((_l->_treasor._y) * Environnement::scale);
+
+			_direction = aim(xf, yf);
+			//std::cout << xf << " " << yf << std::endl;
+			//std::cout << _direction << std::endl;
 		}
 		else
 		{
