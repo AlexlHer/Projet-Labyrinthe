@@ -41,7 +41,7 @@ void Gardien::update(){
 	//vision();
 
 	//détermine l'action effectuée
-	action();
+	//action();
 
 	return;
 }

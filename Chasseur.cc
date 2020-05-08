@@ -166,27 +166,28 @@ bool Chasseur::process_fireball(float dx, float dy)
 		return true;
 	}
 
-	else if(97 == _l->data(	fireBallX, fireBallY)){
+	else if(_l->data(fireBallX, fireBallY) >= 97 && _l->data(fireBallX, fireBallY) <= 122){
 
 		//getLabyrinthe()->set_data(fireBallX, fireBallY, 0);
-		int mem;
-		for (int i = 0; i < _l->_nwall - 1; i++){
-			if(	fireBallX >= _l->_walls[i]._x1 && fireBallX >= _l->_walls[i]._x2 &&
-				fireBallY >= _l->_walls[i]._y1 && fireBallY >= _l->_walls[i]._y2){
+		for (int i = 0; i < _l->_nwall; i++){
+			if(	fireBallX >= _l->_walls[i]._x1 && fireBallX <= _l->_walls[i]._x2 &&
+				fireBallY >= _l->_walls[i]._y1 && fireBallY <= _l->_walls[i]._y2){
 					std::cout << "salut" << std::endl;
-					// mem = i;
-					// _l->_walls[i] = _l->_walls[_l->_nwall];
+
+					for(int j = i; j < _l->_nwall - 1; j++){
+						_l->_walls[j] = _l->_walls[j+1];
+					}
+					_l->_nwall --;
 					break;
 			}
-			//_l->_nwall --;
 
-			// std::cout << "x1 : " << _l->_walls[i]._x1 << std::endl;
-			// std::cout << "y1 : " << _l->_walls[i]._y1 << std::endl;
-			// std::cout << "x2 : " << _l->_walls[i]._x2 << std::endl;
-			// std::cout << "y2 : " << _l->_walls[i]._y2 << std::endl;
-			// std::cout << "fireball x : " << (int)((_fb->get_x() + dx) / Environnement::scale) << std::endl;
-			// std::cout << "fireball y : " << (int)((_fb->get_y() + dy) / Environnement::scale) << std::endl;
-			// std::cout << std::endl;
+			std::cout << "x1 : " << _l->_walls[i]._x1 << std::endl;
+			std::cout << "y1 : " << _l->_walls[i]._y1 << std::endl;
+			std::cout << "x2 : " << _l->_walls[i]._x2 << std::endl;
+			std::cout << "y2 : " << _l->_walls[i]._y2 << std::endl;
+			std::cout << "fireball x : " << (int)((_fb->get_x() + dx) / Environnement::scale) << std::endl;
+			std::cout << "fireball y : " << (int)((_fb->get_y() + dy) / Environnement::scale) << std::endl;
+			std::cout << std::endl;
 		}
 		
 		//_l->_npicts --;
