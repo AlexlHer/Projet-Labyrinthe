@@ -168,7 +168,7 @@ bool Chasseur::process_fireball(float dx, float dy)
 		return true;
 	}
 
-	else if(_l->data(fireBallX, fireBallY) >= 97 && _l->data(fireBallX, fireBallY) <= 122){
+	else if(_l->data(fireBallX, fireBallY) == '='){
 
 		//getLabyrinthe()->set_data(fireBallX, fireBallY, 0);
 		for (int i = 0; i < _l->_nwall; i++){
