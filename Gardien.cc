@@ -16,8 +16,6 @@ Gardien::Gardien(Labyrinthe *l, const char *modele) : Personnage(l, modele, 3)
 	//initialise l'aléatoire
 	srand(time(NULL));
 
-	//initialise la cible des gardiens
-	//_cible = dynamic_cast<Chasseur*>(_l->_guards[0]);
 
 	//met l'angle de départ du gardien à 0
 	_angle = 0;
@@ -38,17 +36,17 @@ void Gardien::update(){
 	}
 
 	//détermine le mode du gardien (passif, alerte, aggressif)
-	//vision();
+	vision();
 
 	//détermine l'action effectuée
-	//action();
+	action();
 
 	return;
 }
 
 void Gardien::action(){
 	//conversion degré à radiant
-	//float piAngle = (_direction * M_PI / 180);
+	float piAngle = (_direction * M_PI / 180);
 
 	//Mode alerte, le gardien se tourne progressivement vers le côté le plus rapide pour faire face à la cible
 	if(_alerte){
@@ -89,11 +87,11 @@ void Gardien::action(){
 
 		// l'angle est locké sur le chasseur
 		_angle = aim(_l->_guards[0]->_x, _l->_guards[0]->_y);
-		//float piAngle = (_angle * M_PI / 180);
+		float piAngle = (_angle * M_PI / 180);
 
 		//Le gardien se dirige vers le Chasseur
 		_direction = _angle;
-		//move(-sin(piAngle), cos(piAngle));
+		move(-sin(piAngle), cos(piAngle));
 
 		//Le gardien tire, sa précision varie en fonction de sa vie
 		attaque();
@@ -102,7 +100,7 @@ void Gardien::action(){
 	//Mode passif, le gardien bouge selon sa nature (défenseur ou non)
 	else{
 		_angle = _direction;
-		//move(sin(-piAngle), cos(piAngle));
+		move(sin(-piAngle), cos(piAngle));
 	}
 
 	return;
@@ -234,14 +232,13 @@ bool Gardien::attaque(){
 	return true;
 }
 
-
+//permet de viser les coordonnées x, y
 int Gardien::aim(float x, float y){
-
+	//on récupère l'angle
 	float angle = atan((_x - x) / (_y - y));
-	if (y > _y)
-	{
+	//on réajuste
+	if (y > _y){
 		angle += M_PI;
-
 		if(x > _x){
 			angle -= 2 * M_PI;
 		}
@@ -285,11 +282,8 @@ bool Gardien::move(double dx, double dy)
 	// Sinon, c'est qu'il y a collision et donc on oriente le personnage autre part.
 	else
 	{
-		//_direction = rand() % 360 + 1;
-		//return false;
 		// Si le Gardien est un défenseur, il va vers le trésor une fois sur deux.
 		if(_defenseur && rand() % 2 == 1)
-		//if(_defenseur)
 		{
 
 			// La case du gardien.
@@ -320,10 +314,6 @@ bool Gardien::move(double dx, double dy)
 					}
 				}
 			}
-			//std::cout << " -------- " << std::endl;
-			//std::cout << versX << " " << versY << std::endl;
-			//std::cout << cX << " " << cY << std::endl;
-
 			
 
 			// On oriente vers la case menant vers le trésor.
@@ -331,12 +321,7 @@ bool Gardien::move(double dx, double dy)
 			float xf = ((versX) * Environnement::scale);
 			float yf = ((versY) * Environnement::scale);
 
-			//float xf = ((_l->_treasor._x) * Environnement::scale);
-			//float yf = ((_l->_treasor._y) * Environnement::scale);
-
 			_direction = aim(xf, yf);
-			//std::cout << xf << " " << yf << std::endl;
-			//std::cout << _direction << std::endl;
 		}
 		else
 		{
@@ -346,38 +331,41 @@ bool Gardien::move(double dx, double dy)
 	return false;
 }
 
+//tire une boule de feu
 void Gardien::fire(int angle_vertical){
-	//_hunter_fire -> play ();
 	_fb -> init (/* position initiale de la boule */ _x, _y, 10.,
 				 /* angles de vis�e */ angle_vertical, 360 - _angle);
 	return;
 }
 
 
+//gère le déplacement de la boule de feu
 bool Gardien::process_fireball(float dx, float dy){
 	Personnage* cible = _allPerso[0];
 
+	//récupère les coordonnées de la fireball
 	float a = _fb->get_x();
 	float b = _fb->get_y();
 
+	//si on touche une cible (ici le chasseur)
 	if(touche_cible(a, b, cible->_x, cible->_y)){
-		//_wall_hit -> play();
-		//Chasseur *c = dynamic_cast<Chasseur*>(cible);
+		
+		//s'il est encore vivant
 		if(cible->_life > 0){
+			//on lui retire des pv
 			cible->_life --;
 			message("PV : %d", cible->_life);
 		}
+		//sinon vous êtes mort
 		else{
 			message("vous êtes mort");
 		}
+
+		//on repermet au gardien de tirer
 		switchShot();
 		return false;
 	}
 
-	// calculer la distance entre le chasseur et le lieu de l'explosion.
-	//float	x = (_x - _fb -> get_x ()) / Environnement::scale;
-	//float	y = (_y - _fb -> get_y ()) / Environnement::scale;
-	//float	dist2 = x*x + y*y;
 	// on bouge que dans le vide!
 	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
 							 (int)((_fb -> get_y () + dy) / Environnement::scale)))
@@ -385,28 +373,20 @@ bool Gardien::process_fireball(float dx, float dy){
 		// il y a la place.
 		return true;
 	}
-	// collision...
-	// calculer la distance maximum en ligne droite.
-	//float	dmax2 = (_l -> width ())*(_l -> width ()) + (_l -> height ())*(_l -> height ());
-	// faire exploser la boule de feu avec un bruit fonction de la distance.
-	//_wall_hit -> play();
+
+	//on inverse
 	switchShot();
 	return false;
 }
 
-// int Gardien::getLife(){
-// 	return _life;
-// }
 
-// void Gardien::setLife(int l){
-// 	_life--;
-// }
-
+//permet d'inverser la variable shot
 void Gardien::switchShot(){
 	(_shot == false) ? (_shot = true) : (_shot = false);
 	return;
 }
 
+//vérifie s'il n'y a pas collision avec un ennemi
 bool Gardien::check_collision_ennemi(float x, float y, float cx, float cy, float ecart){
 	return (	(x >= cx && x < cx + ecart) &&
 				(y >= cy && y < cy + ecart) );

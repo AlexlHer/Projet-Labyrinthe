@@ -60,8 +60,6 @@ public:
 	// fonction a n'appeller QUE si des gardiens sont recr��s.
 	void make_fireballs (void);
 
-	virtual bool set_data (int i, int j, int b) =0;
-	virtual void display_tab() = 0;
 };
 
 #endif

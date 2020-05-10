@@ -437,10 +437,12 @@ Labyrinthe::Labyrinthe(char *filename)
 
 	// On donne les roles de défenseur.
 	int potentielDefense = 0;
-	for (int i = 1; i < _nguards; i++)
+	for (int i = 1; i < persos.size(); i++)
 	{
-		potentielDefense += distMax / _innond[(int)(_guards[i]->_x + Environnement::scale / 2) / Environnement::scale][(int)(_guards[i]->_y + Environnement::scale / 2) / Environnement::scale];
-		if(potentielDefense <= seuilDefense) _guards[i]->_defenseur = true;
+		potentielDefense += distMax / _innond[(int)(persos[i]->_x + Environnement::scale / 2) / Environnement::scale][(int)(persos[i]->_y + Environnement::scale / 2) / Environnement::scale];
+		if(potentielDefense <= seuilDefense) {
+			persos[i]->_defenseur = true;
+		}
 		else break;
 	}
 

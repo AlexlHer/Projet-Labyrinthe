@@ -15,9 +15,15 @@ class Personnage;
 class Personnage : public Mover{
     private:
     public:
+        //vie
         int _life;
+        //vector qui contient tous les perso
         std::vector<Personnage*> _allPerso;
+        //le labyrinthe
         Labyrinthe* _myLaby;
+        //si le personnage est défenseur ou pas
+        bool _defenseur;
+
 
         Personnage(Labyrinthe *l, const char *modele, int life) : Mover(120, 80, l, modele){
             _life = life;
@@ -41,8 +47,5 @@ class Personnage : public Mover{
         }
 
 };
-
-//initialisation de la variable statique
-//std::vector<Personnage*> Personnage::_allPerso; 
 
 #endif

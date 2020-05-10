@@ -31,8 +31,6 @@ bool Chasseur::move_aux(double dx, double dy)
 		return false;
 	}
 
-	//float x = _x + Environnement::scale / 2;
-	//float y = _y + Environnement::scale / 2;
 
 	int posX = (int)((_x + dx) / Environnement::scale);
 	int posY = (int)((_y + dy) / Environnement::scale);
@@ -45,21 +43,22 @@ bool Chasseur::move_aux(double dx, double dy)
 		//empêche le Chasseur de se déplacer sur la position des Gardiens
 		for(int i = 1; i < _l->_nguards; i++){
 			Personnage *cible = _allPerso[i];
+			//un gardien vivant nous bloque
 			if(cible->getLife() > 0){
 				if(check_collision_ennemi(_x+dx, _y+dy, cible->_x, cible->_y, Environnement::scale)){
 					return false;
 				}
 			}
 		}
+		//on se déplace
 		_x += dx;
 		_y += dy;
 		return true;
 	}
 
-
+	//si on est devant un téléporteur
 	else if(_l->data(posX, posY) >= 97 && _l->data(posX, posY) <= 122)
 	{
-		std::cout << "val : " << _l->data(posX, posY) -32 << std::endl;
 		teleportation(_l->data(posX, posY) - 32);	
 	}
 
@@ -123,11 +122,7 @@ bool Chasseur::process_fireball(float dx, float dy)
 		if ((a >= cible->_x && a < cible->_x + Environnement::scale) &&
 			(b >= cible->_y && b < cible->_y + Environnement::scale))
 		{
-			//float dmax2 = (_l->width()) * (_l->width()) + (_l->height()) * (_l->height());
-			// faire exploser la boule de feu avec un bruit fonction de la distance.
-			//_wall_hit->play(1. - dist2 / dmax2);
 
-			//Gardien *g = dynamic_cast<Gardien*>(cible);
 			if(cible->getLife() > 0){
 				cible->setLife(cible->getLife() - 1);
 			}
@@ -140,7 +135,6 @@ bool Chasseur::process_fireball(float dx, float dy)
 				bool fin = true;
 				for (int j = 1; j < (int)_allPerso.size(); j++)
 				{
-					//Gardien *gg = dynamic_cast<Gardien*>(_l->_guards[j]);
 					std::cout << "life : " << _allPerso[j]->_life << std::endl;
 					if(_allPerso[j]->_life > 0){
 						fin = false;
@@ -168,31 +162,31 @@ bool Chasseur::process_fireball(float dx, float dy)
 		return true;
 	}
 
+	//on touche un mur cassable
 	else if(_l->data(fireBallX, fireBallY) == '='){
 
-		//getLabyrinthe()->set_data(fireBallX, fireBallY, 0);
 		for (int i = 0; i < _l->_nwall; i++){
 			if(	fireBallX >= _l->_walls[i]._x1 && fireBallX <= _l->_walls[i]._x2 &&
 				fireBallY >= _l->_walls[i]._y1 && fireBallY <= _l->_walls[i]._y2){
-					std::cout << "salut" << std::endl;
 
+					//on met à 0 les les coordonées d'un mur horizontal
+					for(int k = _l->_walls[i]._x1; k < _l->_walls[i]._x2; k++){
+						_myLaby->set_data(k, fireBallY, 0);
+					}
+					//on met à 0 les les coordonées d'un mur vertical
+					for(int k = _l->_walls[i]._y1; k < _l->_walls[i]._y2; k++){
+						_myLaby->set_data(fireBallX, k, 0);
+					}
+					//on supprime le mur touché
 					for(int j = i; j < _l->_nwall - 1; j++){
 						_l->_walls[j] = _l->_walls[j+1];
 					}
+					//on décrement wall
 					_l->_nwall --;
 					break;
 			}
-
-			std::cout << "x1 : " << _l->_walls[i]._x1 << std::endl;
-			std::cout << "y1 : " << _l->_walls[i]._y1 << std::endl;
-			std::cout << "x2 : " << _l->_walls[i]._x2 << std::endl;
-			std::cout << "y2 : " << _l->_walls[i]._y2 << std::endl;
-			std::cout << "fireball x : " << (int)((_fb->get_x() + dx) / Environnement::scale) << std::endl;
-			std::cout << "fireball y : " << (int)((_fb->get_y() + dy) / Environnement::scale) << std::endl;
-			std::cout << std::endl;
 		}
-		
-		//_l->_npicts --;
+		//regénère la visualisation
 		_l->reconfigure();
 	}
 
@@ -211,18 +205,8 @@ bool Chasseur::process_fireball(float dx, float dy)
 
 void Chasseur::fire(int angle_vertical)
 {
-	//affiche la vie de tous les persos
-	// std::vector<Personnage*> a;
-	// for(int i = 0; i < _allPerso.size(); i++){
-	// 	int a = _allPerso[i]->_life;
-	// 	std::cout << "sa vie : " << a << std::endl;
-	// }
-	// std::cout << std::endl;
-
-	//_hunter_fire->play();
 
 	if(_life > 0){
-		_myLaby->display_tab();
 
 		_fb->init(/* position initiale de la boule */ _x, _y, 10.,
 			  /* angles de vis�e */ angle_vertical, _angle);
