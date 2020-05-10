@@ -31,8 +31,8 @@ bool Chasseur::move_aux(double dx, double dy)
 		return false;
 	}
 
-	float x = _x + Environnement::scale / 2;
-	float y = _y + Environnement::scale / 2;
+	//float x = _x + Environnement::scale / 2;
+	//float y = _y + Environnement::scale / 2;
 
 	int posX = (int)((_x + dx) / Environnement::scale);
 	int posY = (int)((_y + dy) / Environnement::scale);
@@ -72,7 +72,7 @@ bool Chasseur::move_aux(double dx, double dy)
  */
 
 void Chasseur::teleportation(int newPos){
-	int a;
+	//int a;
 	for(int i = 0; i < _l->width(); i++){
 		for(int j = 0; j < _l->height(); j++){
 			if(_l->data(i, j) == newPos){
@@ -116,13 +116,14 @@ bool Chasseur::process_fireball(float dx, float dy)
 	// on bouge que dans le vide!
 
 	//
-	for(int i = 1; i < _allPerso.size(); i++){
+	for (int i = 1; i < (int)_allPerso.size(); i++)
+	{
 		Personnage *cible = _allPerso[i];
 
 		if ((a >= cible->_x && a < cible->_x + Environnement::scale) &&
 			(b >= cible->_y && b < cible->_y + Environnement::scale))
 		{
-			float dmax2 = (_l->width()) * (_l->width()) + (_l->height()) * (_l->height());
+			//float dmax2 = (_l->width()) * (_l->width()) + (_l->height()) * (_l->height());
 			// faire exploser la boule de feu avec un bruit fonction de la distance.
 			//_wall_hit->play(1. - dist2 / dmax2);
 
@@ -137,13 +138,14 @@ bool Chasseur::process_fireball(float dx, float dy)
 
 				//utilisé pour vérifier s'il y a encore des gardiens en vie
 				bool fin = true;
-				for(int j = 1; j < _allPerso.size(); j++){
+				for (int j = 1; j < (int)_allPerso.size(); j++)
+				{
 					//Gardien *gg = dynamic_cast<Gardien*>(_l->_guards[j]);
 					std::cout << "life : " << _allPerso[j]->_life << std::endl;
 					if(_allPerso[j]->_life > 0){
 						fin = false;
 						break;
-					}	
+					}
 				}
 				if(fin){
 					message("Victoire, les gardiens ne sont plus en état de se battre");

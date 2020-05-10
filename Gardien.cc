@@ -48,7 +48,7 @@ void Gardien::update(){
 
 void Gardien::action(){
 	//conversion degré à radiant
-	float piAngle = (_direction * M_PI / 180);
+	//float piAngle = (_direction * M_PI / 180);
 
 	//Mode alerte, le gardien se tourne progressivement vers le côté le plus rapide pour faire face à la cible
 	if(_alerte){
@@ -89,7 +89,7 @@ void Gardien::action(){
 
 		// l'angle est locké sur le chasseur
 		_angle = aim(_l->_guards[0]->_x, _l->_guards[0]->_y);
-		piAngle = (_angle * M_PI / 180);
+		//float piAngle = (_angle * M_PI / 180);
 
 		//Le gardien se dirige vers le Chasseur
 		_direction = _angle;
@@ -206,7 +206,7 @@ bool Gardien::vision(){
 
 bool Gardien::attaque(){
 	int fireRate = rand()%20;
-	int erreurVisee = 20;
+	//int erreurVisee = 20;
 
 	//si la fireball n'est pas déjà tirée
 	if(!_shot){
@@ -297,8 +297,8 @@ bool Gardien::move(double dx, double dy)
 			int cY = (int)(y / Environnement::scale);
 
 			// La où le gardien devra aller.
-			int versX;
-			int versY;
+			int versX = 0;
+			int versY = 0;
 
 			// On cherche la plus petite case autour du gardien (qui conduira vers le trésor).
 			int plusPetit = INT_MAX;
@@ -312,11 +312,11 @@ bool Gardien::move(double dx, double dy)
 					if (sX == 0 && sY == 0) continue;
 
 					// Si on a trouvé une case menant plus rapidement vers le trésor, on la choisi.
-					if (_l->innond(cX + sX, cY + sY) < plusPetit && _l->innond(cX + sX, cY + sY) != -2)
+					if (getInnond(cX + sX, cY + sY) < plusPetit && getInnond(cX + sX, cY + sY) != -2)
 					{
 						versX = cX + sX;
 						versY = cY + sY;
-						plusPetit = _l->innond(cX + sX, cY + sY);
+						plusPetit = getInnond(cX + sX, cY + sY);
 					}
 				}
 			}
@@ -375,9 +375,9 @@ bool Gardien::process_fireball(float dx, float dy){
 	}
 
 	// calculer la distance entre le chasseur et le lieu de l'explosion.
-	float	x = (_x - _fb -> get_x ()) / Environnement::scale;
-	float	y = (_y - _fb -> get_y ()) / Environnement::scale;
-	float	dist2 = x*x + y*y;
+	//float	x = (_x - _fb -> get_x ()) / Environnement::scale;
+	//float	y = (_y - _fb -> get_y ()) / Environnement::scale;
+	//float	dist2 = x*x + y*y;
 	// on bouge que dans le vide!
 	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
 							 (int)((_fb -> get_y () + dy) / Environnement::scale)))

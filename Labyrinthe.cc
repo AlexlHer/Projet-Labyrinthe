@@ -76,13 +76,13 @@ Labyrinthe::Labyrinthe(char *filename)
 	do
 	{
 		tmp.clear();
-		for(int i = 0; i < ligne.length(); i++)
+		for (int i = 0; i < (int)ligne.length(); i++)
 		{
 			tmp.push_back(ligne[i]);
 		}
 		laby.push_back(tmp);
 
-		if(ligne.length() > widthLaby) widthLaby = ligne.length();
+		if((int)ligne.length() > widthLaby) widthLaby = ligne.length();
 
 	} while (getline(fichier, ligne));
 
@@ -122,7 +122,8 @@ Labyrinthe::Labyrinthe(char *filename)
 	// }
 
 	std::regex affiche("[a-z]");
-	std::regex non_mur("[A-Z ]");
+	std::regex non_mur("[A-Z =]");
+	std::regex mur("[-|]");
 	std::regex tp("[A-BD-FH-SU-WY-Z]");
 
 	int debut;
@@ -130,6 +131,7 @@ Labyrinthe::Labyrinthe(char *filename)
 
 	std::string cts;
 	std::string cts_droite;
+	std::string cts_gauche;
 	std::string cts_bas;
 
 	std::vector<Wall> affiches;
@@ -146,31 +148,36 @@ Labyrinthe::Labyrinthe(char *filename)
 	std::map<int, int> debutsVerticales;
 
 	// Analyse laby.
-	for (int i = 0; i < laby.size(); i++)
+	for (int i = 0; i < (int)laby.size(); i++)
 	{
 		debut = -1;
 
-		for (int j = 0; j < laby[i].size(); j++)
+		for (int j = 0; j < (int)laby[i].size(); j++)
 		{
 			// Pour regex.
 			cts = std::string(1, laby[i][j]);
-			cts_droite = (j + 1 < laby[i].size() ? std::string(1, laby[i][j + 1]) : " ");
-			cts_bas = (i + 1 < laby.size() ? std::string(1, laby[i + 1][j]) : " ");
 
-			// Début d'un mur H.
+			cts_droite = (j + 1 < (int)laby[i].size() ? std::string(1, laby[i][j + 1]) : " ");
+			cts_gauche = (j - 1 >= 0 ? std::string(1, laby[i][j - 1]) : " ");
+
+			cts_bas = (i + 1 <(int) laby.size() ? std::string(1, laby[i + 1][j]) : " ");
+
+
+
+			// Début d'un mur H ou mur H destructible.
 			// debut == -1 car il peut y avoir des '+' sur un mur déjà commencé (+---+---+).
-			// Après, on doit avoir un mur (non non_mur).
-			if (laby[i][j] == '+' && debut == -1 && !std::regex_match(cts_droite, non_mur))
+			// Après, on doit avoir un mur (non non_mur) ou un mur destructible "=".
+			if (laby[i][j] == '+' && debut == -1 
+			&& (!std::regex_match(cts_droite, non_mur) || cts_droite == "="))
 			{
 				debut = j;
 				// std::cout << "debut H" << debut << std::endl;
 			}
 
-			// Fin du mur H (si après, on a un non_mur.)
-
-
+			// Fin du mur H (si après, on a un non_mur ou un mur V.)
 			else if (laby[i][j] == '+' && debut != -1 
-			&& (std::regex_match(cts_droite, non_mur) || cts_droite == "|") )
+			&& (std::regex_match(cts_droite, non_mur) || cts_droite == "|") 
+			&& cts_gauche != "=")
 			{
 				murs.push_back({i, debut, i, j, 0});
 				for (int k = debut; k <= j; k++)
@@ -182,8 +189,33 @@ Labyrinthe::Labyrinthe(char *filename)
 					}
 				}
 				// std::cout << "Mur H" << debut << " " << j << " " << i << std::endl;
-				debut = -1;
+				// Si on a un mur destructible juste après, on le commence directement.
+				if (cts_droite == "=")
+					debut = j;
+				else
+					debut = -1;
 			}
+
+			// Fin du mur H destructible (si après, on a un non_mur ou un mur normal.)
+			else if (laby[i][j] == '+' && debut != -1 && cts_gauche == "=")
+			{
+				murs.push_back({i, debut, i, j, 0});
+				for (int k = debut; k <= j; k++)
+				{
+					if (_data[i][k] == 0)
+					{
+						_data[i][k] = '=';
+						_innond[i][k] = -2;
+					}
+				}
+				// Si on a un mur normal ou un second mur destructible juste après, on le commence directement.
+				if (cts_droite == "-" || cts_droite == "=")
+					debut = j;
+				else
+					debut = -1;
+			}
+
+
 
 			// Début d'un mur V.
 			// Si y'a un + au-dessus et que debut n'est pas déjà utilisé.
@@ -205,6 +237,37 @@ Labyrinthe::Labyrinthe(char *filename)
 				for (int k = debutsVerticales.find(j)->second; k <= i; k++)
 				{
 					if(_data[k][j] == 0)
+					{
+						_data[k][j] = 1;
+						_innond[k][j] = -2;
+					}
+				}
+				// std::cout << "Mur V" << debutsVerticales.find(j)->second << " " << i << " " << j << std::endl;
+				debutsVerticales[j] = -1;
+			}
+
+
+
+			// Début d'un mur V destructible.
+			// Si y'a un + au-dessus et que debut n'est pas déjà utilisé.
+			if (laby[i][j] == '+' 
+			&& (debutsVerticales.find(j) == debutsVerticales.end() || debutsVerticales.find(j)->second == -1) 
+			&& cts_bas == "=")
+			{
+				debutsVerticales[j] = i;
+				// std::cout << "debut V" << debutsVerticales[j] << std::endl;
+			}
+
+			// Fin d'un mur V destructible.
+			// Si y'a un + au-dessus et que debut est utilisé.
+			else if (laby[i][j] == '+' 
+			&& debutsVerticales.find(j) != debutsVerticales.end() && debutsVerticales.find(j)->second != -1 
+			&& (std::regex_match(cts_bas, non_mur) || cts_bas == "-"))
+			{
+				murs.push_back({debutsVerticales.find(j)->second, j, i, j, 0});
+				for (int k = debutsVerticales.find(j)->second; k <= i; k++)
+				{
+					if (_data[k][j] == 0)
 					{
 						_data[k][j] = 1;
 						_innond[k][j] = -2;
@@ -268,13 +331,13 @@ Labyrinthe::Labyrinthe(char *filename)
 				// std::cout << "Trésor" << _treasor._x << " " << _treasor._y << std::endl;
 			}
 
+			// Destination.
 			else if(std::regex_match(cts, tp))
 			{
 				_data[i][j] = laby[i][j];
 			}
 
 			// Affiches.
-
 			else if (std::regex_match(cts, affiche))
 			{
 				// Mur +--a--+.
@@ -312,12 +375,15 @@ Labyrinthe::Labyrinthe(char *filename)
 				affiches.push_back(a);
 				
 			}
+		
+			// Mur cassable.
 		}
 	}
 
 	//damien
 	//std::vector<Personnage*> *p = &persos;
-	for(int i = 0; i < persos.size(); i++){
+	for (int i = 0; i < (int)persos.size(); i++)
+	{
 		persos[i]->_allPerso = persos;
 	}
 	//Personnage::_allPerso = persos;

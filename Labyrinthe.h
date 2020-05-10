@@ -30,9 +30,6 @@ class Labyrinthe : public Environnement
 		char data(int i, int j);
 		int innond(int i, int j);
 
-		int getDistMax() { return distMax; };
-		int getSeuilDefense() { return seuilDefense; };
-
 		bool set_data(int i, int j, int b);
 
 		//provisoire

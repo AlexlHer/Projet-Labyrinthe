@@ -36,6 +36,10 @@ class Personnage : public Mover{
             return _myLaby;
         }
 
+        int getInnond(int i, int j){
+            return _myLaby->innond(i, j);
+        }
+
 };
 
 //initialisation de la variable statique

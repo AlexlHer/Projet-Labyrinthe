@@ -25,4 +25,4 @@ b	voiture.jpg	# texture de l'affiche 2
 |                    |
 |                    |
 |                    |
-+---------b----------+
++---------b--+====+--+
