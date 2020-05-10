@@ -2,6 +2,7 @@
 
 a	affiche.jpg	# texture de l'affiche 1
 b	voiture.jpg	# texture de l'affiche 2
+d	tp_bleu.jpg	# texture de l'affiche 2
 
 
 +---------v----------+
@@ -22,7 +23,7 @@ b	voiture.jpg	# texture de l'affiche 2
 |                    |
 |      X             |
 |                    |
+|          D         |
 |                    |
 |                    |
-|                    |
-+---------b--+====+--+
++---d-----b--+====+--+
